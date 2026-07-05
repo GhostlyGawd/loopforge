@@ -21,13 +21,16 @@ items added per iteration.
       (two-iteration rule), or restyle within existing structure if no tooling change.
       → Restyled tools/build.py template to the Weft palette + weft-line signature,
       implementing ADR-003 (proposed i5, applied i6 — two-iteration rule satisfied).
-- [ ] B7 (builder) Add loops LP-0008 and split follow-ups for 0009/0010 as P1 items.
+- [x] B7 (builder) Add loops LP-0008 and split follow-ups for 0009/0010 as P1 items.
+      → LP-0008 Flake Hunter (testing · medium). Follow-ups filed as P1 below.
 - [ ] B8 (reviewer) First review pass: score LP-0001…LP-0005 against QUALITY.md, file
       `reviews/review-001.md`, promote/demote statuses.
 - [ ] B9 (auditor) Audit #1 → `reviews/audit-001.md`. If sound: set phase to "grow",
       refill role_queue, record transition as ADR.
 
 ## Grow (worked after bootstrap)
+- [ ] P1 LP-0009 changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)
+- [ ] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
 - [ ] P1 Per-loop detail pages on the site (proposal ADR first; template change).
 - [ ] P1 Add `related:` cross-links across all seed loops.
 - [ ] P2 CONTRIBUTING.md for humans who want to submit loops.
@@ -37,7 +40,7 @@ items added per iteration.
 - ~~dependency-upgrader~~ — shipped i3 as LP-0006. (small · code-quality)
 - a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
 - changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)
-- flake-hunter — find, reproduce, and fix one flaky test per pass. (medium · testing)
+- ~~flake-hunter~~ — shipped i7 as LP-0008. (medium · testing)
 - api-client-generator — grow a typed client endpoint-by-endpoint from an OpenAPI spec. (medium · build)
 - benchmark-optimizer — one profiled hotspot per pass, guarded by perf regression tests. (large · code-quality)
 - i18n-extractor — externalize one component's strings per pass. (medium · build)

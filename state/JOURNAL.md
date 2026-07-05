@@ -118,3 +118,19 @@ Entry template (copy exactly; newest at the bottom):
   and changed only the livery — the blueprint was always "a machine awaiting its livery"
   (ADR-001), so this is that livery, not a redesign. Structure change would need its own
   ADR. Signature stays singular: one weft line per surface, everything else quiet.
+
+## i7 — builder — 2026-07-05T00:00:00Z
+- did: Bootstrap B7. Wrote LP-0008 Flake Hunter (testing · medium) — one flaky test per
+  pass: reproduce the nondeterminism (N reruns), diagnose the single root cause, fix the
+  cause (never a blind retry or timeout bump), else quarantine as tracked debt. Filed the
+  two split follow-ups as P1: LP-0009 changelog-scribe (docs) and LP-0010 a11y-sweeper.
+- files: library/loops/testing/LP-0008-flake-hunter.md (new), state/BACKLOG.md (B7 checked,
+  idea struck, two P1 follow-ups added), state/STATE.json (i→7), state/JOURNAL.md,
+  regenerated library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: B8 — Reviewer scores LP-0001…LP-0005 against QUALITY.md, files
+  reviews/review-001.md, and promotes drafts that clear the bar to `reviewed`.
+- notes: Explicitly related to LP-0003 (Coverage Climber) — climb coverage, then hunt the
+  flakes that erode trust in it. The banned-retry rule is the whole point: a retry hides a
+  flake, and a hidden flake is worse than a visible one. Testing shelf now holds 2 loops.
+
