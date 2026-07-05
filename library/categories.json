@@ -1,0 +1,13 @@
+{
+  "version": 0,
+  "note": "Taxonomy v0, seeded at genesis. Librarian owns evolution via ADR (see backlog B2).",
+  "tiers": ["micro", "small", "medium", "large", "epic"],
+  "statuses": ["draft", "reviewed", "canonical", "deprecated"],
+  "categories": [
+    { "id": "build",        "name": "Build & Ship",   "desc": "Create something new from a spec, feature by feature." },
+    { "id": "code-quality", "name": "Code Quality",   "desc": "Refactor, lint, harden, and modernize existing code." },
+    { "id": "testing",      "name": "Testing",        "desc": "Grow coverage, kill flakes, strengthen the safety net." },
+    { "id": "docs",         "name": "Docs & Writing", "desc": "Keep written artifacts alive, honest, and useful." },
+    { "id": "meta",         "name": "Meta",           "desc": "Loops that build and maintain loop systems themselves." }
+  ]
+}
