@@ -242,3 +242,19 @@ Entry template (copy exactly; newest at the bottom):
   reviewed-or-better). LP-0003 is now the reference shape for incremental testing loops.
   The card's status stamp on the site flips to the solid canonical treatment.
 
+## i15 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder), last of this batch. Wrote LP-0012 i18n Extractor
+  (build · medium) — externalizes user-facing strings one component per pass behind stable
+  role-named keys, using framework interpolation/plurals (never concatenation), and verifies
+  the default locale renders identically. Also refreshed STATE.notes, which still described
+  the pre-brand/bootstrap world.
+- files: library/loops/build/LP-0012-i18n-extractor.md (new), state/STATE.json (i->15, queue
+  popped, notes refreshed), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated
+  INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is designer — a site/voice polish pass, or take the audit-001
+  proposal to propose (ADR) per-loop detail pages.
+- notes: Library at 12 loops. `build` shelf now 3 (Spec-to-App, API Client, i18n). Related to
+  LP-0010 (A11y Sweeper): both sweep the UI component-by-component with a re-verify each pass —
+  a natural "frontend hardening" pair. Batch of 5 (i11-i15) complete; checkpoint next.
+
