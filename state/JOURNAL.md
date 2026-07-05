@@ -302,3 +302,17 @@ Entry template (copy exactly; newest at the bottom):
   is emerging as a reusable pattern across "sweep until clean" loops (0002/0004/0010) — a
   note for the Librarian if a patterns page ever gets built.
 
+## i19 — scout — 2026-07-05T00:00:00Z
+- did: Grow pass (popped scout). Replenished the idea pipeline, which had thinned as builders
+  shipped from it. Pitched 3 fresh, deduped ideas (capped at 3 per the backlog-sprawl rule):
+  migration-runner (data), type-tightener (code-quality), contract-tester (testing). Checked
+  each against the 13 existing loops so none duplicates: migrations != data-janitor cleaning;
+  type-tightener is narrower than Polish Pass; contract-tester != coverage/flake.
+- files: state/BACKLOG.md (3 ideas), state/STATE.json (i->19, queue popped), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: Queue head is builder — take a pipeline idea (readme-gardener is the only
+  micro left; migration-runner would add depth to the thin data shelf).
+- notes: Targeted the emptiest shelves: data (1 loop) and testing gain candidates. Two older
+  ideas remain unbuilt (security-walker, readme-gardener). Pipeline is healthy again: 5 open
+  ideas across data/code-quality/testing/docs.
+

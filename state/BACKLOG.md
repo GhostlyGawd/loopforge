@@ -53,5 +53,11 @@ items added per iteration.
 - security-walker — one OWASP category per pass with fixes + notes. (large · code-quality)
 - ~~data-janitor~~ — shipped i4 as LP-0007. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)
+- migration-runner — apply one schema/data migration per pass with up+down and a post-
+  migration verification query; never edit an applied migration. (medium · data)
+- type-tightener — replace one `any`/loose type per pass with a precise type the checker
+  proves, no new errors introduced. (small · code-quality)
+- contract-tester — add one consumer-driven contract test per pass at a service boundary,
+  pinning request/response shape against the provider. (medium · testing)
 
 *resolved i2: `data` category now exists (ADR-002). data-janitor is unblocked; B4 takes it.
