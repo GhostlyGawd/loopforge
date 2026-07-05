@@ -43,6 +43,14 @@ updated: 2026-07-04
 8. `## Variations` — optional; parameterizations worth knowing.
 9. `## Review log` — reviewers append scores here; authors never edit it.
 
+> **`## Run it` (rolling out — ADR-007).** A copy-paste slash-command form of the loop: one
+> fenced ```` ```markdown ```` block the reader saves as `.claude/commands/<slug>.md`. It
+> self-initializes (creates its state file from a template if missing, so `## Setup` becomes
+> optional) and is run continuously by Claude Code's built-in `/loop /<slug>` — no shell
+> harness needed interactively. Being added to every entry (canon first); becomes a
+> gate-required section (validate.py) once all loops carry it, via a follow-up ADR. Until
+> then it is optional and un-enforced. The shell `## Harness` remains the headless/CI path.
+
 ## House harness pattern
 
 ```bash

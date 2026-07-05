@@ -4,7 +4,7 @@ title: Flake Hunter
 category: testing
 tier: medium
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a test runner that can run a single test repeatedly, CI history or a flake list]
 stop_when: no test in state/flakes.json is still "open" — each is fixed, quarantined, or accepted
 state_files: [state/flakes.json, JOURNAL.md]
@@ -43,6 +43,50 @@ genuinely out of reach — never silently.
    }
    ```
    `status` is one of `open` | `fixed` | `quarantined` | `accepted`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/flake-hunter.md`. Run one pass with `/flake-hunter`, or loop it with `/loop /flake-hunter` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Flake Hunter — reproduce and fix one flaky test per pass
+---
+You are one pass of a flake-hunting loop. Files are your only memory; assume amnesia.
+
+0. If state/flakes.json does not exist: create it as { "reruns": 50, "suspects": [], "fixed": [], "quarantined": [] }, then STOP and ask me to add suspect test ids (or grant CI access to mine them), and re-run.
+1. Read state/flakes.json and the last 30 lines of JOURNAL.md.
+2. If no suspect has status "open": append "NO OPEN FLAKES" to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE "open" suspect. If the suspects list is empty but you have CI access, mine the
+   last N failed runs for one test that also has green runs on the same commit, add it as
+   a suspect, and take it.
+4. Reproduce the flake: run that single test "reruns" times (from state). Record the
+   observed failure rate (e.g. 7/50). If it passes 100%, it is not reproducibly flaky from
+   here — mark it "accepted: not reproduced locally (Nx)" with the date and move on; do not
+   guess at fixes for something you cannot see fail.
+5. Diagnose the ONE root cause from the failure output. The usual suspects: test-order or
+   shared-state coupling, real time / timezone, unseeded randomness, unawaited async or
+   fixed sleeps, network/filesystem/DB assumptions, floating-point equality. Write the
+   cause in the journal in one sentence.
+6. Fix the CAUSE, not the symptom: seed the RNG, inject a clock, await the condition
+   instead of sleeping, isolate the shared fixture, stub the boundary. Do NOT add blind
+   retries or bump timeouts to paper over it. Re-run the single test "reruns" times: it
+   must now pass 100%. Then run the surrounding file to confirm no collateral damage.
+   - If you genuinely cannot fix it this pass: quarantine it with the runner's skip/exclude
+     mechanism, tagged with a link to the diagnosis, and set status "quarantined". A
+     quarantine is a tracked debt, never a silent skip.
+7. Update state/flakes.json (move the suspect to fixed/quarantined, or mark accepted).
+   Append a JOURNAL.md entry: test, failure rate before, root cause, fix or quarantine,
+   rate after. Commit: "flake({test}): {cause} — {N/50}→0/50" or "flake({test}): quarantined".
+   Stop.
+
+Hard rules: one flake per pass; fix the cause, never add retries or inflate timeouts to
+hide it; never delete a test to make red go away; a quarantine must carry a diagnosis and
+a status, so the debt stays visible.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

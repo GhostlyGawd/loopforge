@@ -399,3 +399,65 @@ Entry template (copy exactly; newest at the bottom):
   loop that could be misread as offensive tooling would fail the charter and basic ethics.
   Library at 17 loops; batch of 5 (i21-i25) complete; checkpoint next.
 
+## i26 — reviewer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped reviewer). Filed review-004, a cross-library finding: every entry
+  under-delivers QUALITY axis 6 (copy-paste truth) — running a loop means assembling state file
+  + PROMPT.md + shell harness, not one paste. Proposed the fix (ADR-007): ship each loop as a
+  self-initializing slash command run continuously by the built-in `/loop /<name>`; no shell
+  harness needed interactively. Filed the rollout as a P0 (a/b/c/d) in BACKLOG.
+- files: reviews/review-004.md (new), state/DECISIONS.md (ADR-007 proposed), state/BACKLOG.md
+  (P0 + split; P0a done), state/STATE.json (i->26), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: P0b — Librarian adds `## Run it` to SCHEMA.md and converts LP-0002/LP-0003
+  as the exemplars (not a tool change; can land now). P0c (build.py copy-button) waits one
+  iteration behind ADR-007 per the two-iteration rule.
+- notes: Corrects an earlier wrong assumption (mine, in chat) that looping needs a shell
+  harness — Claude Code's built-in `/loop` re-runs a command on an interval and continues
+  itself. That is exactly what makes the one-paste command form viable.
+
+## i27 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder) on the P0. P0b: documented the `## Run it` section in
+  SCHEMA.md (rolling out per ADR-007, un-enforced until all entries carry it) and converted
+  the two canonical loops as exemplars — LP-0002 Polish Pass and LP-0003 Coverage Climber now
+  carry a self-initializing `.claude/commands/<slug>.md` block run continuously via
+  `/loop /<slug>`. No tool change; gate stays green.
+- files: library/SCHEMA.md (## Run it note), LP-0002 + LP-0003 (## Run it + version bump),
+  state/STATE.json (i->27), state/BACKLOG.md (P0b done), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: P0c — implement build.py "Copy command" per card (two-iteration rule
+  satisfied: ADR-007 proposed i26). Then P0d converts the remaining 15 loops, canon quality first.
+- notes: The command form makes the library deliver its own promise — copy one block, paste as
+  a command, `/loop /coverage-climber`, done. Left the shell `## Harness` intact as the
+  headless/CI path; the two are complementary, not redundant.
+
+## i28 — designer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped designer) on the P0. P0c: implemented the site's "Copy /command"
+  control. build.py now extracts each loop's `## Run it` command block (new run_command()),
+  passes it raw into the card DATA, and the card renders a weft-gold "Copy /command" button
+  that writes the command to the clipboard — shown only for converted loops, so the rollout is
+  incremental. Two-iteration rule satisfied (ADR-007 proposed i26, implemented i28).
+- files: tools/build.py (import re; run_command(); command in collect()+DATA; .copybtn CSS +
+  card button JS), state/STATE.json (i->28), state/BACKLOG.md (P0c done), state/JOURNAL.md,
+  regenerated INDEX + site.
+- validation: pass
+- next-suggestion: P0d — add `## Run it` to the remaining 15 loops; each gains its button on
+  the next build. Then re-score copy-paste-truth (reviewer) and merge → Vercel redeploys.
+- notes: Command is passed RAW (not html-escaped) because it is copied verbatim to the
+  clipboard, never rendered as innerHTML. LP-0002/LP-0003 now show the button; the other 15
+  show none until converted — a visible, honest progress bar of the rollout.
+
+## i29 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). P0d — converted the remaining 15 loops to the `## Run it`
+  command form, completing the P0. Each `## Run it` reuses that loop's own vetted prompt with a
+  self-initializing step 0 (creates its state file from an inline template, then stops for
+  config) and the `/loop /<slug>` run note; LP-0005 (the meta reference impl) points its command
+  at the repo's LOOP.md per ADR-006. All 17 loops now render a Copy /command button.
+- files: 15 library entries (## Run it + version bump), state/STATE.json (i->29), state/BACKLOG.md
+  (P0 + P0d done), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Reviewer re-scores copy-paste-truth now that every loop is one-paste
+  runnable (review-004 promised it) — several drafts should clear draft→reviewed, lifting the
+  quality ratio and clearing the audit-002 P1.
+- notes: Built the conversions by reusing each loop's existing prompt rather than rewriting —
+  faithful and consistent. The shell `## Harness` stays as the headless/CI path. P0 complete:
+  the library finally delivers "copy it, run it" in a single paste.

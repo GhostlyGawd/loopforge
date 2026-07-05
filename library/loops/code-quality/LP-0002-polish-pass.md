@@ -4,7 +4,7 @@ title: Polish Pass
 category: code-quality
 tier: micro
 status: canonical
-version: 0.1.2
+version: 0.1.3
 requires: [git, project linter/formatter, test suite]
 stop_when: a full sweep of the codebase finds nothing above the "worth fixing" bar
 state_files: [state/polish-ledger.md, JOURNAL.md]
@@ -28,6 +28,37 @@ Cheap, safe, and endlessly repeatable.
 ## Setup
 Create `state/polish-ledger.md` with two sections: `## Fixed` and `## Declined (and
 why)`. Ensure the linter and test suite run clean-ish; note the baseline in the ledger.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as
+`.claude/commands/polish-pass.md`. Run one pass with `/polish-pass`, or loop it with
+`/loop /polish-pass` (default 10m interval). Self-initializes on first run.
+
+```markdown
+---
+description: Polish Pass — fix one small blemish per pass, verified by tests
+---
+Files are your only memory; assume amnesia.
+
+0. If `state/polish-ledger.md` does not exist, create it with two sections, `## Fixed` and
+   `## Declined (and why)`, and note the linter/test baseline.
+1. Read state/polish-ledger.md and the last 20 lines of JOURNAL.md.
+2. Find ONE small blemish not already in the ledger: a lint warning, dead code, an unclear
+   name, a missing docstring on a public function, a magic number, inconsistent formatting.
+   Prefer the highest-confidence, lowest-blast-radius fix.
+3. If a full skim finds nothing above the "worth fixing" bar, append "SWEEP CLEAN" to the
+   ledger, create a STOP file, commit, and exit.
+4. Fix it. Behavior must not change: run the tests; any red means revert.
+5. Log it under ## Fixed (file, what, why). If you considered and rejected a fix, log it under
+   ## Declined so future passes skip it.
+6. Append a one-line JOURNAL.md entry. Commit: "polish: {what}". Stop.
+
+Hard rules: one blemish per pass; no behavior changes; no new dependencies; anything needing
+product judgment goes to ## Declined, not into code.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

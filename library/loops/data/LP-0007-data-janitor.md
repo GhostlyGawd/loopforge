@@ -4,7 +4,7 @@ title: Data Janitor
 category: data
 tier: small
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a dataset the loop can load, a profiling library or SQL access]
 stop_when: every column in state/data-ledger.json is marked clean, accepted, or blocked
 state_files: [state/data-ledger.json, JOURNAL.md]
@@ -43,6 +43,48 @@ cleaning pipeline; the raw data is never mutated in place.
    }
    ```
    Fill `columns` from the header; every column starts `pending`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/data-janitor.md`. Run one pass with `/data-janitor`, or loop it with `/loop /data-janitor` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Data Janitor — clean one data column per pass (raw is read-only)
+---
+You are one pass of a data-cleaning loop. Files are your only memory; assume amnesia.
+The raw snapshot in data/raw/ is READ-ONLY — you may never edit data by hand.
+
+0. If state/data-ledger.json does not exist: put a read-only snapshot at data/raw/, create a passthrough clean.py (raw→clean), and create state/data-ledger.json as { "source": "data/raw/<file>", "output": "data/clean/<file>", "columns": [], "rules": [] } with one "pending" entry per column; then STOP and confirm, and re-run.
+1. Read state/data-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no column has status "pending": append "DATA CLEAN — all columns resolved" to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick exactly ONE "pending" column — prefer the one whose dirtiness is most likely to
+   corrupt downstream use (keys, join fields, money, dates, categoricals with typos).
+4. Profile only that column: row count, null/blank rate, distinct values, min/max/outliers
+   for numerics, format variants for strings/dates, and 3–5 concrete offending examples.
+   Write what you found to the journal — the profile IS part of the deliverable.
+5. Decide ONE of:
+   - a cleaning rule (trim, canonicalize case, parse to a type, map typo→canonical, clip
+     an impossible range, flag-not-drop bad rows). Encode it as reproducible code in the
+     transform (clean.py/clean.sql) and append it to "rules" with a plain-English note.
+     Mark the column "clean".
+   - "accept": the column is already fine or its quirks are meaningful. Add no rule; mark
+     it "accepted" with a one-line reason.
+   Never drop rows silently and never impute values without recording the assumption.
+6. Re-run the transform end to end (raw → clean). It MUST run green and be deterministic:
+   running it twice on the raw snapshot produces byte-identical output. If your rule makes
+   the pipeline non-deterministic or errors, revert the rule and mark the column
+   "blocked: <reason>".
+7. Append a JOURNAL.md entry: column, what was wrong (with counts), rule applied or why
+   accepted, rows affected. Commit: "data({column}): {rule summary}". Stop.
+
+Hard rules: one column per pass; raw data is read-only; every change is code in the
+transform, never a manual data edit; no silent row drops or imputations; a column that
+resists twice becomes "blocked:" with a diagnosis.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

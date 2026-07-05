@@ -150,3 +150,26 @@ Template:
   narrow — "prompt lives in THIS repo" — so it can't become a loophole for lazy by-reference
   entries that send readers off to some external URL.
 
+## ADR-007 — "Run it": ship each loop as a self-contained slash command (proposed) (i26, reviewer)
+- Status: proposed
+- Context: QUALITY.md axis 6 (copy-paste truth) asks a loop to "run as pasted." review-004
+  finds all 17 entries fail this in practice — running one means hand-creating a state file
+  from Setup prose, copying the prompt into PROMPT.md, and wiring a shell harness. That is
+  assembly, not copy-paste. Meanwhile Claude Code supports slash commands
+  (.claude/commands/<name>.md) and a built-in `/loop [interval] /<name>` that re-runs a
+  command on an interval and continues on its own (default 10m). A loop packaged as a command
+  needs NO shell harness interactively — `/loop /<name>` is the loop. The existing shell
+  `## Harness` stays valid but is the headless/CI path (via `claude -p`), not the only one.
+- Decision (proposed): Add a `## Run it` section to SCHEMA.md — one fenced block the reader
+  saves as `.claude/commands/<slug>.md`. The command prompt (a) SELF-INITIALIZES: on first run,
+  if its state file is missing it creates it from an inline template, so the separate Setup step
+  disappears; (b) does exactly one pass; (c) documents continuous running — interactive:
+  `/loop /<slug>` (or `/loop 5m /<slug>`); headless/CI: the shell harness already in `## Harness`.
+  build.py renders a one-click "Copy command" control per card. The build.py render is a tools/
+  change → two-iteration rule: this ADR proposes; a later pass implements. The SCHEMA.md addition
+  and per-entry `## Run it` blocks are not tool changes and may land immediately.
+- Consequences: the library finally delivers its own "copy it, run it, trust it" promise in one
+  paste. Rollout (tracked as P0 in BACKLOG): SCHEMA gains `## Run it`; each of 17 entries gets the
+  block, canon first (LP-0002, LP-0003); build.py copy-button cites this ADR; validate.py may later
+  require the section (its own ADR). The shell `## Harness` remains for unattended runs. Reviewer
+  re-scores axis 6 upward once entries carry the command form (review-004).

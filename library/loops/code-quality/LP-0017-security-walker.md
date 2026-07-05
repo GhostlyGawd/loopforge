@@ -4,7 +4,7 @@ title: Security Walker
 category: code-quality
 tier: large
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a test suite, a SAST/dependency scanner, an app you are authorized to test]
 stop_when: every OWASP category in state/security-ledger.json is walked and its findings fixed or accepted
 state_files: [state/security-ledger.json, JOURNAL.md]
@@ -44,6 +44,45 @@ someday" into a tracked, category-by-category walk with an audit trail.
    }
    ```
    Seed `categories` from the OWASP Top 10 (or your threat model); each starts `open`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/security-walker.md`. Run one pass with `/security-walker`, or loop it with `/loop /security-walker` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Security Walker — harden one OWASP category per pass (defensive, authorized code only)
+---
+You are one pass of a security-hardening loop. Files are your only memory; assume amnesia.
+Scope rule: you operate ONLY on this codebase, which the operator owns/is authorized to test.
+Defensive only — you find and FIX weaknesses; you never build or stage an actual attack.
+
+0. If state/security-ledger.json does not exist: confirm you are AUTHORIZED to test this code and get a SAST/dependency/secret scanner running, then create state/security-ledger.json as { "scan_command": "", "test_command": "", "categories": [], "accepted": [] }; STOP and ask me to set the commands and seed categories from the OWASP Top 10, and re-run.
+1. Read state/security-ledger.json and the last 30 lines of JOURNAL.md.
+2. If every category is fixed/accepted AND scan_command is clean: append "SECURITY WALK
+   COMPLETE" to JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick ONE "open" OWASP category — prefer highest impact for this app (access control and
+   injection usually first). Run scan_command and read the code for THAT class only.
+4. Find the real issues in that class (e.g. for injection: unparameterized queries, shelling
+   out with user input, unsafe deserialization). For EACH, apply the correct defensive fix —
+   parameterized queries, output encoding, authz checks at the boundary, validated input,
+   secrets moved to config, least privilege. Fix the root cause, not the symptom; do not
+   weaken a check or add a bypass. If a finding is a false positive or an accepted risk,
+   record it under "accepted" with a reason and (for accepted risk) a compensating control.
+5. Add a regression test that FAILS if the vulnerability returns (an authz test that a
+   non-owner is denied; a test that a payload is neutralized). Run test_command — stay green;
+   any red you caused is fixed or reverted. Re-run scan_command for that class.
+6. Mark the category fixed (or accepted). Append a JOURNAL.md entry: category, issues found,
+   fixes, tests added, anything accepted with its reason. Commit: "sec({owasp}): {summary}".
+   Stop.
+
+Hard rules: one OWASP category per pass; defensive fixes only, never author an exploit or a
+bypass; scope is this owned/authorized codebase only; every fix ships a regression test; an
+accepted risk is logged with a reason and a compensating control, never silently ignored;
+never commit a real secret — rotate and move it to config if found.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

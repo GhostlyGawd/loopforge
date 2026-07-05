@@ -4,7 +4,7 @@ title: i18n Extractor
 category: build
 tier: medium
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, an i18n framework wired up, a test/build that catches broken renders]
 stop_when: no in-scope component in state/i18n-ledger.json still holds a hardcoded user-facing string
 state_files: [state/i18n-ledger.json, JOURNAL.md]
@@ -42,6 +42,42 @@ default locale — turning "internationalize the whole app" into a tracked, low-
    }
    ```
    List in-scope components; each starts `pending`. `accepted` holds intentional non-strings.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/i18n-extractor.md`. Run one pass with `/i18n-extractor`, or loop it with `/loop /i18n-extractor` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: i18n Extractor — externalize one component's strings per pass
+---
+You are one pass of an i18n-extraction loop. Files are your only memory; assume amnesia.
+
+0. If state/i18n-ledger.json does not exist: confirm the i18n framework renders one t("key"), then create state/i18n-ledger.json as { "catalog": "locales/en.json", "verify_command": "", "components": [], "accepted": [] }; STOP and ask me to set verify_command and list in-scope components, and re-run.
+1. Read state/i18n-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no component is "pending": append "I18N SWEEP CLEAN" to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE "pending" component. Find every user-facing hardcoded string in it: visible
+   text, labels, placeholders, aria-labels, titles, alt text, error/toast messages.
+   IGNORE non-user strings: keys, enum values, test ids, class names, log lines, URLs.
+4. For each, add a stable, namespaced key to the catalog (e.g. "header.signIn") with the
+   current English text as the value, and replace the literal with the framework's
+   translation call. Handle interpolation and pluralization with the framework's features,
+   never string concatenation. Keep keys meaningful (by role, not by English words, so a
+   copy tweak doesn't churn the key). If a "string" is genuinely not translatable (a brand
+   name, a code sample), leave it and record it under "accepted" with a reason.
+5. Verify: run "verify_command". The default locale must render EXACTLY as before — same
+   text, same layout. Any diff you caused is a bug: fix it (usually a missed interpolation
+   or a wrong key). Do not change wording while extracting; extraction is not copy-editing.
+6. Mark the component "done". Append a JOURNAL.md entry: component, strings extracted, keys
+   added, anything left "accepted". Commit: "i18n({component}): extract {N} strings". Stop.
+
+Hard rules: one component per pass; never change the visible default-locale text while
+extracting; no string concatenation for sentences (use interpolation/plurals); non-user
+strings stay hardcoded; an untranslatable literal is "accepted" with a reason, not forced.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

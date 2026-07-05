@@ -7,6 +7,7 @@ its signature. Template changes follow the two-iteration ADR rule. Stdlib only.
 """
 import html
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -48,11 +49,23 @@ def first_paragraph(body):
     return " ".join(out)
 
 
+def run_command(body):
+    """Extract the .claude/commands/<slug>.md block from a '## Run it' section, if present.
+    Returns the raw command text (for a one-click copy on the card), or "" if the loop has
+    not been converted yet."""
+    if "## Run it" not in body:
+        return ""
+    section = body.split("## Run it", 1)[1].split("\n## ", 1)[0]
+    m = re.search(r"```(?:markdown)?\n(.*?)\n```", section, re.S)
+    return m.group(1).strip() if m else ""
+
+
 def collect():
     entries = []
     for path in sorted(LOOPS.rglob("LP-*.md")):
         meta, body = parse_front_matter(path.read_text())
         meta["purpose"] = first_paragraph(body)
+        meta["command"] = run_command(body)
         meta["path"] = str(path.relative_to(ROOT))
         entries.append(meta)
     return entries
@@ -153,6 +166,12 @@ TEMPLATE = """<!DOCTYPE html>
   .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
   .stopline{font-size:11px; color:var(--dim)}
   .stopline b{color:var(--ink); font-weight:400; letter-spacing:.1em}
+  /* one-click copy of the loop's slash-command (## Run it) */
+  .copybtn{align-self:flex-start; margin-top:2px; background:transparent; color:var(--mark);
+    border:1px solid var(--mark); font:inherit; font-size:11px; letter-spacing:.08em;
+    padding:4px 9px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--field)}
+  .copybtn:focus-visible{outline:2px solid var(--mark); outline-offset:2px}
   .empty{padding:40px 14px; color:var(--dim); text-align:center; display:none}
   footer{padding:12px 14px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em; display:flex; flex-wrap:wrap; gap:6px 18px}
   @media (max-width:640px){ .titleblock{grid-template-columns:1fr 1fr} .cell:nth-child(2){border-right:none} }
@@ -201,6 +220,19 @@ function card(e){
     '<p class="stopline"><b>STOPS WHEN</b> ' + e.stop_when + '</p>' +
     '<div class="meta"><span class="tier">' + e.tier + '</span>' +
     e.tags.map(t => '<span class="tag">' + t + '</span>').join('') + '</div>';
+  if (e.command){
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'copybtn';
+    b.textContent = 'Copy /command';
+    b.title = 'Copy this loop as a Claude Code slash command — save to .claude/commands/, run with /loop';
+    b.addEventListener('click', () => {
+      navigator.clipboard.writeText(e.command).then(() => {
+        b.textContent = 'Copied ✓';
+        setTimeout(() => { b.textContent = 'Copy /command'; }, 1500);
+      });
+    });
+    el.appendChild(b);
+  }
   return el;
 }
 function render(){
@@ -248,6 +280,8 @@ def build_site(entries, tax, state):
             "tags": [html.escape(t) for t in e.get("tags", [])],
             "purpose": html.escape(e.get("purpose", "")),
             "stop_when": html.escape(e.get("stop_when", "")),
+            # raw (not HTML-escaped): written to the clipboard verbatim, never as innerHTML
+            "command": e.get("command", ""),
             "path": e.get("path", ""),
         }
         for e in entries

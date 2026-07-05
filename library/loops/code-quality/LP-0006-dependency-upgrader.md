@@ -4,7 +4,7 @@ title: Dependency Upgrader
 category: code-quality
 tier: small
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a package manager, a green test suite]
 stop_when: state/deps.json worklist is empty or every remaining item is marked blocked
 state_files: [state/deps.json, JOURNAL.md]
@@ -42,6 +42,47 @@ reversible chore that a loop can grind through overnight.
    }
    ```
    `policy` is one of `patch` | `minor` | `major` — the ceiling a single pass may cross.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/dependency-upgrader.md`. Run one pass with `/dependency-upgrader`, or loop it with `/loop /dependency-upgrader` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Dependency Upgrader — upgrade one dependency per pass
+---
+You are one pass of a dependency-upgrade loop. Files are your only memory; assume you
+remember nothing.
+
+0. If state/deps.json does not exist: create it as { "test_command": "", "policy": "minor", "worklist": [], "done": [] }, then STOP and ask me to set test_command and seed the worklist from the outdated list, and re-run.
+1. Read state/deps.json and the last 30 lines of JOURNAL.md.
+2. If the worklist has no item with status "todo": append "DEPS CLEAN — worklist empty"
+   to JOURNAL.md, create a STOP file, commit, and exit.
+3. Confirm the baseline is green: run the exact "test_command". If it is already RED
+   before you touch anything, do not upgrade — append a note to JOURNAL.md ("baseline
+   red, human needed"), create STOP, and exit. Never build on a red baseline.
+4. Pick exactly ONE "todo" item — prefer the lowest-risk hop first (patch, then minor,
+   then major), and within that the leaf dependencies before the widely-depended-on ones.
+   Do not exceed the "policy" ceiling in a single pass; if the only hop available is a
+   major and policy forbids it, mark that item "blocked: exceeds policy" and pick another.
+5. Upgrade only that one package (edit the manifest / run the manager's targeted upgrade),
+   then reinstall the lockfile. Change nothing else.
+6. Run "test_command".
+   - GREEN: move the item to "done" with its new version; if the changelog notes a
+     required code change you made, say what and why in the journal.
+   - RED: revert the manifest and lockfile (git checkout -- <files>), mark the item
+     "blocked: <one-line reason from the failure>". Do NOT try to fix product code to
+     accommodate the upgrade in this pass — that is a separate, deliberate task.
+7. Append a JOURNAL.md entry: package, from→to, GREEN/BLOCKED, anything learned.
+8. Commit: "deps({name}): {from}→{to}" (green) or "deps({name}): blocked — {reason}".
+   One package, one commit. Stop.
+
+Hard rules: one package per pass; never upgrade past the policy ceiling; a red suite —
+baseline or post-upgrade — always means revert, never force; a package that blocks twice
+stays blocked until a human or a dedicated pass clears it.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

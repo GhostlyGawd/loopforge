@@ -4,7 +4,7 @@ title: Type Tightener
 category: code-quality
 tier: small
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a static type checker, a test suite]
 stop_when: no loose/any type remains in state/types-ledger.json scope, or all remaining are justified
 state_files: [state/types-ledger.json, JOURNAL.md]
@@ -40,6 +40,40 @@ type-focused Polish Pass.
    }
    ```
    Seed `sites` from the checker's `any`/implicit-any/missing-annotation report; each `open`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/type-tightener.md`. Run one pass with `/type-tightener`, or loop it with `/loop /type-tightener` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Type Tightener — replace one loose type per pass
+---
+You are one pass of a type-tightening loop. Files are your only memory; assume amnesia.
+
+0. If state/types-ledger.json does not exist: get the type checker running, then create state/types-ledger.json as { "check_command": "", "test_command": "", "sites": [], "justified": [] }; STOP and ask me to set the commands and seed sites from the checker's any/implicit-any report, and re-run.
+1. Read state/types-ledger.json and the last 30 lines of JOURNAL.md.
+2. Run "check_command". If it is clean and no site is "open": append "TYPES TIGHT" to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick ONE "open" site — prefer the widest blast radius (exported/public signatures, then
+   shared utilities, then leaves). If the report shows a site not in the ledger, add it.
+4. Replace the loose type with the MOST PRECISE type the checker can prove — infer from
+   usage, follow the value's real shape, introduce a named type/interface if it clarifies.
+   Do NOT use `any`, `unknown`-and-cast, or `@ts-ignore`/`# type: ignore` to "win"; if the
+   value is genuinely dynamic, type it honestly (`unknown` with a real narrowing guard) or
+   mark the site "justified" with a reason. Change types only — no behavior changes.
+5. Verify BOTH: run "check_command" (must have zero NEW errors and one fewer loose site) and
+   "test_command" (must stay green — a type change that breaks a test revealed a real bug or
+   a wrong annotation; fix the annotation, or the bug if it's real and say so). Revert on red.
+6. Move the site to done (or "justified"). Append a JOURNAL.md entry: site, old→new type,
+   anything learned about the code. Commit: "types({where}): {any→precise}". Stop.
+
+Hard rules: one site per pass; never suppress the checker (`any`/ignore/blind cast) to pass;
+no behavior changes; a genuinely dynamic value is typed honestly or "justified" with a
+reason; the test suite stays green.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 
