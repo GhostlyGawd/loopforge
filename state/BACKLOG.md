@@ -31,6 +31,8 @@ items added per iteration.
       → Sound. Bootstrap closed; phase → grow, role_queue refilled (ADR-004).
 
 ## Grow (worked after bootstrap)
+- [ ] P1 Reviewer: clear the draft backlog (LP-0006…LP-0014) draft→reviewed before more
+      canonical promotions — quality ratio fell to 0.36 (audit-002).
 - [x] P1 LP-0009 changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)
       → shipped i10 as LP-0009 Changelog Scribe.
 - [x] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)

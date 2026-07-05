@@ -331,3 +331,18 @@ Entry template (copy exactly; newest at the bottom):
   "trust your data / evolve your schema" pair. Related to LP-0007. Batch of 5 (i16-i20) done;
   checkpoint next. Consciously declined readme-gardener to avoid a near-duplicate.
 
+## i21 — auditor — 2026-07-05T00:00:00Z
+- did: Grow pass (popped auditor). Filed audit-002 (20 iterations in). Verified no drift, no
+  red, governance intact. One thing working: the canonical ladder is real (2 canonicals via
+  independent smoke-reads). One thing rotting: builders outpaced reviewers — quality ratio
+  fell 0.63 -> 0.36, with 9 grow-era loops still unreviewed. Filed a P1 review-catch-up and
+  re-raised the still-open timestamp + SCHEMA-§4 proposals. Refilled role_queue (was empty).
+- files: reviews/audit-002.md (new), state/BACKLOG.md (P1 added), state/STATE.json (i->21,
+  queue refilled), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: Queue head is builder, but the P1 says the next REVIEWER slot should clear
+  LP-0006…LP-0014 before more canonical work. Builders may keep adding while reviewers catch up.
+- notes: The rotting finding is self-correctable via the existing cycle + the P1 — no phase
+  or protocol change needed. Flagged honestly rather than papering over a dipping ratio; that
+  is the auditor's whole job. Two reviewer slots sit in the refilled queue to do the catch-up.
+

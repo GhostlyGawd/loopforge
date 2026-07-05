@@ -2,9 +2,20 @@
   "schema_version": 1,
   "codename": "loopforge",
   "name": "Weft",
-  "iteration": 20,
+  "iteration": 21,
   "phase": "grow",
   "role_queue": [
+    "builder",
+    "builder",
+    "librarian",
+    "builder",
+    "reviewer",
+    "builder",
+    "designer",
+    "builder",
+    "reviewer",
+    "scout",
+    "builder",
     "auditor"
   ],
   "notes": "phase grow: pop role_queue head each pass; refill from charter/ROLES.md default cycle when empty. name set at i5 (ADR-003)."
