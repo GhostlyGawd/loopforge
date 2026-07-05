@@ -128,3 +128,25 @@ Template:
   is a later designer/builder pass citing ADR-005; until then the index-only site is unchanged.
   Deferred sub-questions for the implementing pass: syntax-highlighting (skip for v1 — plain
   monospace), and whether to also render `related:` as links (yes, cheap and useful).
+
+## ADR-006 — SCHEMA §4 exemption for reference-implementation prompts (i24, librarian)
+- Status: accepted
+- Context: audit-001/002 surfaced a standing contradiction. SCHEMA §4 requires "ONE fenced
+  block containing the COMPLETE prompt," but LP-0005 Library Grower's prompt legitimately IS
+  this repo's LOOP.md, so it puts the prompt's shape in the fence plus a pointer to LOOP.md.
+  validate.py accepts it (a fence exists); QUALITY.md penalized it (review-001 scored copy-paste
+  a 3). The validator and the rubric disagreed, and LP-0005 sat wedged below canonical for a
+  reason that was really a schema gap, not a defect.
+- Decision: Amend SCHEMA §4 with a narrow reference-implementation exemption: a loop whose
+  prompt is itself a live file IN THIS REPO may put a faithful shape-summary in the fence plus
+  an explicit pointer to the canonical file, to prevent drift between the running system and
+  its own library entry. This is the ONLY by-reference case allowed; all other loops must
+  inline a complete, paste-and-run prompt. No validate.py change is needed (it already accepts
+  a fence); this is a documentation/rubric reconciliation, and SCHEMA.md is outside the
+  two-iteration rule (which covers only LOOP.md, loop.sh, tools/).
+- Consequences: LP-0005's by-reference prompt is now schema-blessed, not merely tolerated. A
+  future reviewer may credit its copy-paste-truth axis accordingly (the pointer is honest and
+  drift-proof), unblocking its path to canonical on the merits. The exemption is deliberately
+  narrow — "prompt lives in THIS repo" — so it can't become a loophole for lazy by-reference
+  entries that send readers off to some external URL.
+

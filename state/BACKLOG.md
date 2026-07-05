@@ -31,6 +31,8 @@ items added per iteration.
       → Sound. Bootstrap closed; phase → grow, role_queue refilled (ADR-004).
 
 ## Grow (worked after bootstrap)
+- [ ] P1 Reviewer: clear the draft backlog (LP-0006…LP-0014) draft→reviewed before more
+      canonical promotions — quality ratio fell to 0.36 (audit-002).
 - [x] P1 LP-0009 changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)
       → shipped i10 as LP-0009 Changelog Scribe.
 - [x] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
@@ -50,13 +52,11 @@ items added per iteration.
 - ~~api-client-generator~~ — shipped i13 as LP-0011. (medium · build)
 - ~~benchmark-optimizer~~ — shipped i17 as LP-0013. (large · code-quality)
 - ~~i18n-extractor~~ — shipped i15 as LP-0012. (medium · build)
-- security-walker — one OWASP category per pass with fixes + notes. (large · code-quality)
+- ~~security-walker~~ — shipped i25 as LP-0017. (large · code-quality)
 - ~~data-janitor~~ — shipped i4 as LP-0007. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)
 - ~~migration-runner~~ — shipped i20 as LP-0014. (medium · data)
-- type-tightener — replace one `any`/loose type per pass with a precise type the checker
-  proves, no new errors introduced. (small · code-quality)
-- contract-tester — add one consumer-driven contract test per pass at a service boundary,
-  pinning request/response shape against the provider. (medium · testing)
+- ~~type-tightener~~ — shipped i22 as LP-0015. (small · code-quality)
+- ~~contract-tester~~ — shipped i23 as LP-0016. (medium · testing)
 
 *resolved i2: `data` category now exists (ADR-002). data-janitor is unblocked; B4 takes it.

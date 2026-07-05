@@ -331,3 +331,71 @@ Entry template (copy exactly; newest at the bottom):
   "trust your data / evolve your schema" pair. Related to LP-0007. Batch of 5 (i16-i20) done;
   checkpoint next. Consciously declined readme-gardener to avoid a near-duplicate.
 
+## i21 — auditor — 2026-07-05T00:00:00Z
+- did: Grow pass (popped auditor). Filed audit-002 (20 iterations in). Verified no drift, no
+  red, governance intact. One thing working: the canonical ladder is real (2 canonicals via
+  independent smoke-reads). One thing rotting: builders outpaced reviewers — quality ratio
+  fell 0.63 -> 0.36, with 9 grow-era loops still unreviewed. Filed a P1 review-catch-up and
+  re-raised the still-open timestamp + SCHEMA-§4 proposals. Refilled role_queue (was empty).
+- files: reviews/audit-002.md (new), state/BACKLOG.md (P1 added), state/STATE.json (i->21,
+  queue refilled), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: Queue head is builder, but the P1 says the next REVIEWER slot should clear
+  LP-0006…LP-0014 before more canonical work. Builders may keep adding while reviewers catch up.
+- notes: The rotting finding is self-correctable via the existing cycle + the P1 — no phase
+  or protocol change needed. Flagged honestly rather than papering over a dipping ratio; that
+  is the auditor's whole job. Two reviewer slots sit in the refilled queue to do the catch-up.
+
+## i22 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0015 Type Tightener (code-quality · small) — one
+  loose type (`any`, untyped param, wide union) per pass replaced with the most precise type
+  the checker can prove; suppression (any/ignore/blind cast) banned; types-only, tests green.
+- files: library/loops/code-quality/LP-0015-type-tightener.md (new), state/STATE.json (i->22),
+  state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder — add contract-tester (testing) next.
+- notes: Sibling to LP-0002 Polish Pass — same janitor shape, aimed at the type layer. Draft;
+  it joins the review-catch-up queue flagged in audit-002. Library at 15 loops.
+
+## i23 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0016 Contract Tester (testing · medium) — pins
+  one consumer/provider interaction per pass with a consumer-driven contract, verified against
+  the provider; over-specification and weaken-to-green both banned; a mismatch is a real
+  finding. Balances the testing shelf against the deep code-quality one.
+- files: library/loops/testing/LP-0016-contract-tester.md (new), state/STATE.json (i->23),
+  state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is librarian — good moment to write the ADR reconciling SCHEMA
+  §4 with LP-0005's by-reference prompt (open since audit-001).
+- notes: Related to LP-0011 API Client Generator — client consumes an API, contract test pins
+  the agreement. testing shelf now 3 (Coverage Climber, Flake Hunter, Contract Tester).
+  Library at 16 loops.
+
+## i24 — librarian — 2026-07-05T00:00:00Z
+- did: Grow pass (popped librarian). Resolved the SCHEMA §4 vs LP-0005 contradiction open since
+  audit-001: amended SCHEMA §4 with a narrow reference-implementation exemption (a loop whose
+  prompt IS a live file in this repo may point at it rather than duplicate it) and recorded the
+  reasoning as ADR-006. No validate.py change needed; SCHEMA.md is outside the two-iteration rule.
+- files: library/SCHEMA.md (§4 exemption), state/DECISIONS.md (ADR-006), state/STATE.json
+  (i->24), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder. Also: a reviewer can now revisit LP-0005's copy-paste
+  score on the merits (ADR-006), and the timestamp-honesty proposal is still open.
+- notes: Kept the exemption deliberately narrow — "prompt lives in THIS repo" — so it can't
+  become a loophole for lazy external-link entries. Validator and rubric now agree; one of the
+  two long-open audit findings is closed. Timestamp honesty remains the last open one.
+
+## i25 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder), last of this batch. Wrote LP-0017 Security Walker
+  (code-quality · large) — one OWASP category per pass, defensive-only (find+fix, never author
+  an exploit), scoped strictly to owned/authorized code, each fix guarded by a regression test,
+  accepted risks logged with a compensating control.
+- files: library/loops/code-quality/LP-0017-security-walker.md (new), state/STATE.json (i->25),
+  state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is reviewer — start the audit-002 review-catch-up: score the
+  draft backlog (LP-0006…LP-0017) oldest-first, draft->reviewed.
+- notes: Wrote it explicitly defensive with a scope/authorization gate up front — a security
+  loop that could be misread as offensive tooling would fail the charter and basic ethics.
+  Library at 17 loops; batch of 5 (i21-i25) complete; checkpoint next.
+
