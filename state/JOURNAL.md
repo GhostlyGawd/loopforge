@@ -399,3 +399,18 @@ Entry template (copy exactly; newest at the bottom):
   loop that could be misread as offensive tooling would fail the charter and basic ethics.
   Library at 17 loops; batch of 5 (i21-i25) complete; checkpoint next.
 
+## i26 — reviewer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped reviewer). Filed review-004, a cross-library finding: every entry
+  under-delivers QUALITY axis 6 (copy-paste truth) — running a loop means assembling state file
+  + PROMPT.md + shell harness, not one paste. Proposed the fix (ADR-007): ship each loop as a
+  self-initializing slash command run continuously by the built-in `/loop /<name>`; no shell
+  harness needed interactively. Filed the rollout as a P0 (a/b/c/d) in BACKLOG.
+- files: reviews/review-004.md (new), state/DECISIONS.md (ADR-007 proposed), state/BACKLOG.md
+  (P0 + split; P0a done), state/STATE.json (i->26), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: P0b — Librarian adds `## Run it` to SCHEMA.md and converts LP-0002/LP-0003
+  as the exemplars (not a tool change; can land now). P0c (build.py copy-button) waits one
+  iteration behind ADR-007 per the two-iteration rule.
+- notes: Corrects an earlier wrong assumption (mine, in chat) that looping needs a shell
+  harness — Claude Code's built-in `/loop` re-runs a command on an interval and continues
+  itself. That is exactly what makes the one-paste command form viable.
