@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0003 Coverage Climber — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0003 · Testing</span>
+    <span class="stamp canonical">canonical</span>
+    <span class="tier">small</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>Coverage Climber</h1>
+<p>Raises real test coverage one meaningful test file at a time. Targets the riskiest untested code first, and refuses to game the metric.</p>
+<h2>When to reach for it</h2>
+<ul><li>A codebase you&#x27;re afraid to change because nothing is tested.</li><li>Before pointing a bigger build/refactor loop at the project.</li><li>Not a fit: projects with no runnable test infrastructure yet (set that up first).</li></ul>
+<h2>Setup</h2>
+<ol><li>Get coverage running once by hand; note the command.</li><li>Create <code>state/coverage.json</code>: <code>{ &quot;target&quot;: 80, &quot;current&quot;: &lt;baseline&gt;, &quot;command&quot;: &quot;&lt;coverage command&gt;&quot;, &quot;worklist&quot;: [] }</code></li></ol>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/coverage-climber.md</code> in your project. Run a single pass with <code>/coverage-climber</code>, or loop it continuously with Claude Code&#x27;s built-in loop: <code>/loop /coverage-climber</code> (add an interval like <code>/loop 5m /coverage-climber</code>; default 10m). It self-initializes on first run — no separate setup step.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: Coverage Climber — raise real test coverage one module per pass
+---
+Files are your only memory; assume amnesia.
+
+0. If `state/coverage.json` does not exist, create it with
+   `{ &quot;target&quot;: 80, &quot;current&quot;: 0, &quot;command&quot;: &quot;&lt;your coverage command&gt;&quot;, &quot;worklist&quot;: [] }`,
+   then STOP and ask me to set &quot;command&quot; (how to run coverage) and &quot;target&quot;, and re-run.
+1. Read state/coverage.json and the last 30 lines of JOURNAL.md.
+2. If current &gt;= target: append &quot;TARGET MET at {current}%&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Run the coverage command; update &quot;current&quot;. Pick ONE untested-or-thin module where a bug
+   would hurt most (entry points, money paths, data mutation) that is not marked blocked.
+4. Write real behavioral tests: happy path, one edge, one failure. Test observed behavior,
+   not implementation details. Capture what you learn as docstrings/comments.
+5. Run the full suite. Any red you caused: fix your tests (never the code under test unless
+   the test found a real bug — then fix the bug and say so loudly in the journal).
+6. Re-run coverage; update &quot;current&quot; and append the module to &quot;worklist&quot; as done. Append a
+   JOURNAL.md entry: module, coverage before→after, anything learned.
+7. Commit: &quot;test({module}): {before}%→{after}%&quot;. Then stop.
+
+Hard rules: one module per pass; no asserting on private internals; never delete or skip
+existing tests; a module that resists twice gets &quot;blocked:&quot; in the worklist with a diagnosis.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of a coverage loop. Files are your only memory.
+
+1. Read state/coverage.json and the last 30 lines of JOURNAL.md.
+2. If current &gt;= target: append &quot;TARGET MET at {current}%&quot; to JOURNAL.md, create STOP,
+   commit, exit.
+3. Run the coverage command. Update &quot;current&quot;. Pick ONE untested-or-thin module — the
+   one where a bug would hurt most (entry points, money paths, data mutation) — that is
+   not marked blocked in the worklist.
+4. Write real behavioral tests for it: happy path, one edge, one failure. Test observed
+   behavior, not implementation details. If you must read deeply to understand the
+   module, write what you learned as docstrings/comments — that&#x27;s part of the value.
+5. Run the full suite. Any red you caused: fix your tests (never the code under test,
+   unless the test found a genuine bug — then fix the bug and say so loudly in the
+   journal).
+6. Re-run coverage; update state/coverage.json (current + append module to worklist as
+   done). Append a JOURNAL.md entry: module, coverage before → after, anything learned.
+7. Commit: &quot;test({module}): {before}%→{after}%&quot;. Stop.
+
+Hard rules: one module per pass; no asserting on private internals; no deleting or
+skipping existing tests; a module that resists twice gets &quot;blocked:&quot; in the worklist
+with a diagnosis.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Container or dedicated VM for unattended runs; git is the undo button.</p>
+<h2>Stop condition</h2>
+<p><code>current &gt;= target</code> in state/coverage.json → announce, create STOP, halt. Raise the target and delete STOP to keep climbing.</p>
+<h2>Failure modes</h2>
+<ul><li><strong>Metric gaming</strong> (trivial asserts) → &quot;behavioral tests, not implementation&quot; rule + reviewer spot checks between runs.</li><li><strong>Legacy module too tangled</strong> → blocked marker with diagnosis; a refactor loop (LP-0002 or larger) clears the path.</li><li><strong>Coverage tool flakiness</strong> → command is pinned in state; failures land in journal rather than silently skewing numbers.</li></ul>
+<h2>Variations</h2>
+<ul><li>Diff-coverage mode: only climb coverage on files changed since a given tag.</li><li>Mutation-testing mode: swap the metric for mutation score.</li></ul>
+<h2>Review log</h2>
+<ul><li>review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 5 · guardrails 5 · copy-paste 5 → avg 5.00. draft → reviewed. Strong canonical candidate; wants only the independent smoke-read. Full pass: reviews/review-001.md.</li><li>review-002 (i14, Lens): independent canonical smoke-read (simulated iteration 1 and iteration N; adversarial). Scores held; no new weaknesses. reviewed -&gt; canonical. See reviews/review-002.md.</li></ul>
+  <pre id="cmd" hidden>---
+description: Coverage Climber — raise real test coverage one module per pass
+---
+Files are your only memory; assume amnesia.
+
+0. If `state/coverage.json` does not exist, create it with
+   `{ &quot;target&quot;: 80, &quot;current&quot;: 0, &quot;command&quot;: &quot;&lt;your coverage command&gt;&quot;, &quot;worklist&quot;: [] }`,
+   then STOP and ask me to set &quot;command&quot; (how to run coverage) and &quot;target&quot;, and re-run.
+1. Read state/coverage.json and the last 30 lines of JOURNAL.md.
+2. If current &gt;= target: append &quot;TARGET MET at {current}%&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Run the coverage command; update &quot;current&quot;. Pick ONE untested-or-thin module where a bug
+   would hurt most (entry points, money paths, data mutation) that is not marked blocked.
+4. Write real behavioral tests: happy path, one edge, one failure. Test observed behavior,
+   not implementation details. Capture what you learn as docstrings/comments.
+5. Run the full suite. Any red you caused: fix your tests (never the code under test unless
+   the test found a real bug — then fix the bug and say so loudly in the journal).
+6. Re-run coverage; update &quot;current&quot; and append the module to &quot;worklist&quot; as done. Append a
+   JOURNAL.md entry: module, coverage before→after, anything learned.
+7. Commit: &quot;test({module}): {before}%→{after}%&quot;. Then stop.
+
+Hard rules: one module per pass; no asserting on private internals; never delete or skip
+existing tests; a module that resists twice gets &quot;blocked:&quot; in the worklist with a diagnosis.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

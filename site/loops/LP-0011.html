@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0011 API Client Generator — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0011 · Build &amp; Ship</span>
+    <span class="stamp draft">draft</span>
+    <span class="tier">medium</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>API Client Generator</h1>
+<p>Grows a hand-quality, typed API client one endpoint per pass from an OpenAPI (or similar) spec. Unlike a bulk generator, each pass adds a single method with real types, a focused test against the spec&#x27;s schema, and a note — so the client stays readable, reviewed, and diff-able, and a spec change touches exactly the endpoints that moved.</p>
+<h2>When to reach for it</h2>
+<ul><li>You consume an API that ships a machine-readable spec (OpenAPI/Swagger, GraphQL SDL, gRPC).</li><li>You want a typed client you can actually read and trust, grown incrementally.</li><li>Not a fit: a one-shot throwaway script (just call fetch); an API with no spec (write the spec first, or use a different loop to reverse-engineer one).</li></ul>
+<h2>Setup</h2>
+<ol><li>Put the spec at <code>spec/openapi.yaml</code> (or point at its URL) and note the base URL.</li><li>Establish the client skeleton: a typed HTTP core (auth, base URL, error handling) and one place methods are added. Get one trivial call working by hand first.</li><li>Seed <code>state/api-client.json</code>: ``<code>json { &quot;spec&quot;: &quot;spec/openapi.yaml&quot;, &quot;test_command&quot;: &quot;&lt;runs the client&#x27;s tests&gt;&quot;, &quot;endpoints&quot;: [ { &quot;op&quot;: &quot;getWidget&quot;, &quot;method&quot;: &quot;GET&quot;, &quot;path&quot;: &quot;/widgets/{id}&quot;, &quot;status&quot;: &quot;pending&quot; } ] } </code>`<code> Populate </code>endpoints<code> from the spec&#x27;s operations; each starts </code>pending`.</li></ol>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/api-client-generator.md</code>. Run one pass with <code>/api-client-generator</code>, or loop it with <code>/loop /api-client-generator</code> (default 10m). It self-initializes on first run.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: API Client Generator — add one typed, tested endpoint per pass
+---
+You are one pass of an API-client loop. Files are your only memory; assume amnesia.
+
+0. If state/api-client.json does not exist: put the spec at spec/openapi.yaml, stand up a typed HTTP core, and create state/api-client.json as { &quot;spec&quot;: &quot;spec/openapi.yaml&quot;, &quot;test_command&quot;: &quot;&quot;, &quot;endpoints&quot;: [] }; STOP and ask me to set test_command and populate endpoints from the spec, and re-run.
+1. Read state/api-client.json and the last 30 lines of JOURNAL.md.
+2. If no endpoint is &quot;pending&quot;: run the full test suite once more; if green, append
+   &quot;CLIENT COMPLETE — all endpoints implemented&quot; to JOURNAL.md, create a STOP file,
+   commit, and exit.
+3. Pick ONE &quot;pending&quot; endpoint — prefer the ones others depend on (auth, then reads that
+   later writes will need), and simple shapes before deeply-nested ones.
+4. Read that operation in the spec: path, method, params (path/query/header/body), request
+   and response schemas, error responses. Implement ONE typed client method for it:
+   accurate parameter and return types generated from the schema (not `any`), the correct
+   HTTP call through the shared core, and typed error handling for the documented failures.
+   Follow the existing client&#x27;s conventions exactly; do not restructure the core this pass.
+5. Write a focused test: it asserts the method builds the right request (path, query, body)
+   and decodes a spec-shaped response into the right type — mock the transport so the test
+   is deterministic and needs no live server. One happy path + one documented error.
+6. Run &quot;test_command&quot;. Red because of your work → fix it; if the spec itself is ambiguous
+   or contradictory, do NOT guess — mark the endpoint &quot;blocked: &lt;question&gt;&quot; and pick another.
+7. Mark the endpoint &quot;done&quot; in state. Append a JOURNAL.md entry: op, types added, anything
+   the spec left unclear. Commit: &quot;client({op}): typed {method} {path}&quot;. Stop.
+
+Hard rules: one endpoint per pass; types come from the schema, never `any` to move on;
+every method ships with a test; never invent behavior the spec doesn&#x27;t state — a spec gap
+is &quot;blocked:&quot; with the question, not a guess; don&#x27;t refactor the shared core mid-endpoint.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of an API-client loop. Files are your only memory; assume amnesia.
+
+1. Read state/api-client.json and the last 30 lines of JOURNAL.md.
+2. If no endpoint is &quot;pending&quot;: run the full test suite once more; if green, append
+   &quot;CLIENT COMPLETE — all endpoints implemented&quot; to JOURNAL.md, create a STOP file,
+   commit, and exit.
+3. Pick ONE &quot;pending&quot; endpoint — prefer the ones others depend on (auth, then reads that
+   later writes will need), and simple shapes before deeply-nested ones.
+4. Read that operation in the spec: path, method, params (path/query/header/body), request
+   and response schemas, error responses. Implement ONE typed client method for it:
+   accurate parameter and return types generated from the schema (not `any`), the correct
+   HTTP call through the shared core, and typed error handling for the documented failures.
+   Follow the existing client&#x27;s conventions exactly; do not restructure the core this pass.
+5. Write a focused test: it asserts the method builds the right request (path, query, body)
+   and decodes a spec-shaped response into the right type — mock the transport so the test
+   is deterministic and needs no live server. One happy path + one documented error.
+6. Run &quot;test_command&quot;. Red because of your work → fix it; if the spec itself is ambiguous
+   or contradictory, do NOT guess — mark the endpoint &quot;blocked: &lt;question&gt;&quot; and pick another.
+7. Mark the endpoint &quot;done&quot; in state. Append a JOURNAL.md entry: op, types added, anything
+   the spec left unclear. Commit: &quot;client({op}): typed {method} {path}&quot;. Stop.
+
+Hard rules: one endpoint per pass; types come from the schema, never `any` to move on;
+every method ships with a test; never invent behavior the spec doesn&#x27;t state — a spec gap
+is &quot;blocked:&quot; with the question, not a guess; don&#x27;t refactor the shared core mid-endpoint.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Run unattended loops in a container or dedicated VM with only the project mounted; git is the undo button. <code>--permission-mode acceptEdits</code> when supervising. Tests mock the transport, so passes need no network and stay deterministic.</p>
+<h2>Stop condition</h2>
+<p>Every endpoint <code>done</code> and the suite green → the loop writes &quot;CLIENT COMPLETE&quot;, creates STOP, and halts. When the spec changes, diff it into the endpoint list (new = <code>pending</code>, changed = <code>pending</code> again), clear STOP, and the loop re-touches only what moved.</p>
+<h2>Failure modes</h2>
+<ul><li><strong><code>any</code>-typed shortcuts</strong> → banned; types are generated from the schema, so the client&#x27;s value (compile-time safety) survives. A genuinely untyped <code>additionalProperties</code> is typed as such explicitly, not blanket-<code>any</code>.</li><li><strong>Spec ambiguity or drift from reality</strong> → &quot;blocked:&quot; with the exact question rather than a guess; a human or a spec-fix pass resolves it. The client never encodes a hallucinated shape.</li><li><strong>Tests that need a live server</strong> (flaky, slow) → the transport is mocked; assertions are on request-building and response-decoding, not on a real endpoint.</li><li><strong>Core churn</strong> → the shared HTTP core is frozen during endpoint passes; changing it is a separate, deliberate task so one pass never rewrites the foundation under the others.</li></ul>
+<h2>Variations</h2>
+<ul><li>GraphQL mode: <code>endpoints</code> become operations from the SDL; generate typed documents + result types per query/mutation.</li><li>Contract-test mode: additionally assert the mocked responses validate against the live spec schema, so the client and spec can&#x27;t silently diverge.</li></ul>
+<h2>Review log</h2>
+<p>_(reviewers append here)_</p>
+  <pre id="cmd" hidden>---
+description: API Client Generator — add one typed, tested endpoint per pass
+---
+You are one pass of an API-client loop. Files are your only memory; assume amnesia.
+
+0. If state/api-client.json does not exist: put the spec at spec/openapi.yaml, stand up a typed HTTP core, and create state/api-client.json as { &quot;spec&quot;: &quot;spec/openapi.yaml&quot;, &quot;test_command&quot;: &quot;&quot;, &quot;endpoints&quot;: [] }; STOP and ask me to set test_command and populate endpoints from the spec, and re-run.
+1. Read state/api-client.json and the last 30 lines of JOURNAL.md.
+2. If no endpoint is &quot;pending&quot;: run the full test suite once more; if green, append
+   &quot;CLIENT COMPLETE — all endpoints implemented&quot; to JOURNAL.md, create a STOP file,
+   commit, and exit.
+3. Pick ONE &quot;pending&quot; endpoint — prefer the ones others depend on (auth, then reads that
+   later writes will need), and simple shapes before deeply-nested ones.
+4. Read that operation in the spec: path, method, params (path/query/header/body), request
+   and response schemas, error responses. Implement ONE typed client method for it:
+   accurate parameter and return types generated from the schema (not `any`), the correct
+   HTTP call through the shared core, and typed error handling for the documented failures.
+   Follow the existing client&#x27;s conventions exactly; do not restructure the core this pass.
+5. Write a focused test: it asserts the method builds the right request (path, query, body)
+   and decodes a spec-shaped response into the right type — mock the transport so the test
+   is deterministic and needs no live server. One happy path + one documented error.
+6. Run &quot;test_command&quot;. Red because of your work → fix it; if the spec itself is ambiguous
+   or contradictory, do NOT guess — mark the endpoint &quot;blocked: &lt;question&gt;&quot; and pick another.
+7. Mark the endpoint &quot;done&quot; in state. Append a JOURNAL.md entry: op, types added, anything
+   the spec left unclear. Commit: &quot;client({op}): typed {method} {path}&quot;. Stop.
+
+Hard rules: one endpoint per pass; types come from the schema, never `any` to move on;
+every method ships with a test; never invent behavior the spec doesn&#x27;t state — a spec gap
+is &quot;blocked:&quot; with the question, not a guess; don&#x27;t refactor the shared core mid-endpoint.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

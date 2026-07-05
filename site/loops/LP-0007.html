@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0007 Data Janitor — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0007 · Data</span>
+    <span class="stamp draft">draft</span>
+    <span class="tier">small</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>Data Janitor</h1>
+<p>Cleans a dataset one column (or field) at a time. Each pass profiles a single column, proposes one cleaning rule, applies it as reproducible code — never as a manual edit to the data — and logs the before/after. The rules file becomes an auditable, re-runnable cleaning pipeline; the raw data is never mutated in place.</p>
+<h2>When to reach for it</h2>
+<ul><li>A messy CSV / table / dataframe you need to trust before analysis or loading.</li><li>Any place a reproducible, reviewable cleaning pipeline beats one-off manual fixes.</li><li>Not a fit: one-off exploratory cleanup you will throw away; streaming/online data where a batch pass has no stable snapshot to profile.</li></ul>
+<h2>Setup</h2>
+<ol><li>Put an immutable snapshot at <code>data/raw/</code> (read-only — the loop never writes here).</li><li>Create the transform entry point <code>clean.py</code> (or <code>clean.sql</code>) that reads <code>data/raw/</code>, applies every rule in order, and writes <code>data/clean/</code>. It starts as a no-op passthrough.</li><li>Seed <code>state/data-ledger.json</code>: ``<code>json { &quot;source&quot;: &quot;data/raw/&lt;file&gt;&quot;, &quot;output&quot;: &quot;data/clean/&lt;file&gt;&quot;, &quot;columns&quot;: [ { &quot;name&quot;: &quot;&lt;col&gt;&quot;, &quot;status&quot;: &quot;pending&quot; } ], &quot;rules&quot;: [] } </code>`<code> Fill </code>columns<code> from the header; every column starts </code>pending`.</li></ol>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/data-janitor.md</code>. Run one pass with <code>/data-janitor</code>, or loop it with <code>/loop /data-janitor</code> (default 10m). It self-initializes on first run.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: Data Janitor — clean one data column per pass (raw is read-only)
+---
+You are one pass of a data-cleaning loop. Files are your only memory; assume amnesia.
+The raw snapshot in data/raw/ is READ-ONLY — you may never edit data by hand.
+
+0. If state/data-ledger.json does not exist: put a read-only snapshot at data/raw/, create a passthrough clean.py (raw→clean), and create state/data-ledger.json as { &quot;source&quot;: &quot;data/raw/&lt;file&gt;&quot;, &quot;output&quot;: &quot;data/clean/&lt;file&gt;&quot;, &quot;columns&quot;: [], &quot;rules&quot;: [] } with one &quot;pending&quot; entry per column; then STOP and confirm, and re-run.
+1. Read state/data-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no column has status &quot;pending&quot;: append &quot;DATA CLEAN — all columns resolved&quot; to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick exactly ONE &quot;pending&quot; column — prefer the one whose dirtiness is most likely to
+   corrupt downstream use (keys, join fields, money, dates, categoricals with typos).
+4. Profile only that column: row count, null/blank rate, distinct values, min/max/outliers
+   for numerics, format variants for strings/dates, and 3–5 concrete offending examples.
+   Write what you found to the journal — the profile IS part of the deliverable.
+5. Decide ONE of:
+   - a cleaning rule (trim, canonicalize case, parse to a type, map typo→canonical, clip
+     an impossible range, flag-not-drop bad rows). Encode it as reproducible code in the
+     transform (clean.py/clean.sql) and append it to &quot;rules&quot; with a plain-English note.
+     Mark the column &quot;clean&quot;.
+   - &quot;accept&quot;: the column is already fine or its quirks are meaningful. Add no rule; mark
+     it &quot;accepted&quot; with a one-line reason.
+   Never drop rows silently and never impute values without recording the assumption.
+6. Re-run the transform end to end (raw → clean). It MUST run green and be deterministic:
+   running it twice on the raw snapshot produces byte-identical output. If your rule makes
+   the pipeline non-deterministic or errors, revert the rule and mark the column
+   &quot;blocked: &lt;reason&gt;&quot;.
+7. Append a JOURNAL.md entry: column, what was wrong (with counts), rule applied or why
+   accepted, rows affected. Commit: &quot;data({column}): {rule summary}&quot;. Stop.
+
+Hard rules: one column per pass; raw data is read-only; every change is code in the
+transform, never a manual data edit; no silent row drops or imputations; a column that
+resists twice becomes &quot;blocked:&quot; with a diagnosis.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of a data-cleaning loop. Files are your only memory; assume amnesia.
+The raw snapshot in data/raw/ is READ-ONLY — you may never edit data by hand.
+
+1. Read state/data-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no column has status &quot;pending&quot;: append &quot;DATA CLEAN — all columns resolved&quot; to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick exactly ONE &quot;pending&quot; column — prefer the one whose dirtiness is most likely to
+   corrupt downstream use (keys, join fields, money, dates, categoricals with typos).
+4. Profile only that column: row count, null/blank rate, distinct values, min/max/outliers
+   for numerics, format variants for strings/dates, and 3–5 concrete offending examples.
+   Write what you found to the journal — the profile IS part of the deliverable.
+5. Decide ONE of:
+   - a cleaning rule (trim, canonicalize case, parse to a type, map typo→canonical, clip
+     an impossible range, flag-not-drop bad rows). Encode it as reproducible code in the
+     transform (clean.py/clean.sql) and append it to &quot;rules&quot; with a plain-English note.
+     Mark the column &quot;clean&quot;.
+   - &quot;accept&quot;: the column is already fine or its quirks are meaningful. Add no rule; mark
+     it &quot;accepted&quot; with a one-line reason.
+   Never drop rows silently and never impute values without recording the assumption.
+6. Re-run the transform end to end (raw → clean). It MUST run green and be deterministic:
+   running it twice on the raw snapshot produces byte-identical output. If your rule makes
+   the pipeline non-deterministic or errors, revert the rule and mark the column
+   &quot;blocked: &lt;reason&gt;&quot;.
+7. Append a JOURNAL.md entry: column, what was wrong (with counts), rule applied or why
+   accepted, rows affected. Commit: &quot;data({column}): {rule summary}&quot;. Stop.
+
+Hard rules: one column per pass; raw data is read-only; every change is code in the
+transform, never a manual data edit; no silent row drops or imputations; a column that
+resists twice becomes &quot;blocked:&quot; with a diagnosis.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Run unattended loops in a container or dedicated VM with only the project mounted; git is the undo button. <code>--permission-mode acceptEdits</code> for supervised runs. Because the raw snapshot is read-only and every fix is code, even a bad pass costs only a revert.</p>
+<h2>Stop condition</h2>
+<p>Every column is <code>clean</code>, <code>accepted</code>, or <code>blocked</code> → the loop writes &quot;DATA CLEAN&quot;, creates STOP, and halts. The output is not just clean data but <code>clean.py</code>/<code>clean.sql</code> plus the <code>rules</code> ledger: a reproducible, reviewable pipeline you can re-run on the next data drop.</p>
+<h2>Failure modes</h2>
+<ul><li><strong>Manual data edits</strong> (the cardinal sin) → raw/ is read-only and every fix must be code; a pass that can&#x27;t express a fix as code marks the column <code>blocked</code> instead.</li><li><strong>Silent row loss</strong> → &quot;flag, don&#x27;t drop&quot; rule; dropping requires an explicit, journaled decision and a preserved count of what was removed.</li><li><strong>Non-deterministic cleaning</strong> (random tie-breaks, unstable sorts) → the twice-identical- output check in step 6 fails the pass and forces a revert.</li><li><strong>Over-cleaning meaningful quirks</strong> → the <code>accept</code> path exists precisely so the loop can decide a column&#x27;s oddity is signal, not noise, and record why.</li></ul>
+<h2>Variations</h2>
+<ul><li>SQL mode: the transform is a versioned <code>clean.sql</code> of idempotent <code>UPDATE</code>/<code>INSERT … SELECT</code> steps into a staging table; the ledger tracks columns the same way.</li><li>Great-Expectations mode: pair each rule with an assertion so the pipeline also grows a validation suite as it cleans.</li></ul>
+<h2>Review log</h2>
+<p>_(reviewers append here)_</p>
+  <pre id="cmd" hidden>---
+description: Data Janitor — clean one data column per pass (raw is read-only)
+---
+You are one pass of a data-cleaning loop. Files are your only memory; assume amnesia.
+The raw snapshot in data/raw/ is READ-ONLY — you may never edit data by hand.
+
+0. If state/data-ledger.json does not exist: put a read-only snapshot at data/raw/, create a passthrough clean.py (raw→clean), and create state/data-ledger.json as { &quot;source&quot;: &quot;data/raw/&lt;file&gt;&quot;, &quot;output&quot;: &quot;data/clean/&lt;file&gt;&quot;, &quot;columns&quot;: [], &quot;rules&quot;: [] } with one &quot;pending&quot; entry per column; then STOP and confirm, and re-run.
+1. Read state/data-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no column has status &quot;pending&quot;: append &quot;DATA CLEAN — all columns resolved&quot; to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick exactly ONE &quot;pending&quot; column — prefer the one whose dirtiness is most likely to
+   corrupt downstream use (keys, join fields, money, dates, categoricals with typos).
+4. Profile only that column: row count, null/blank rate, distinct values, min/max/outliers
+   for numerics, format variants for strings/dates, and 3–5 concrete offending examples.
+   Write what you found to the journal — the profile IS part of the deliverable.
+5. Decide ONE of:
+   - a cleaning rule (trim, canonicalize case, parse to a type, map typo→canonical, clip
+     an impossible range, flag-not-drop bad rows). Encode it as reproducible code in the
+     transform (clean.py/clean.sql) and append it to &quot;rules&quot; with a plain-English note.
+     Mark the column &quot;clean&quot;.
+   - &quot;accept&quot;: the column is already fine or its quirks are meaningful. Add no rule; mark
+     it &quot;accepted&quot; with a one-line reason.
+   Never drop rows silently and never impute values without recording the assumption.
+6. Re-run the transform end to end (raw → clean). It MUST run green and be deterministic:
+   running it twice on the raw snapshot produces byte-identical output. If your rule makes
+   the pipeline non-deterministic or errors, revert the rule and mark the column
+   &quot;blocked: &lt;reason&gt;&quot;.
+7. Append a JOURNAL.md entry: column, what was wrong (with counts), rule applied or why
+   accepted, rows affected. Commit: &quot;data({column}): {rule summary}&quot;. Stop.
+
+Hard rules: one column per pass; raw data is read-only; every change is code in the
+transform, never a manual data edit; no silent row drops or imputations; a column that
+resists twice becomes &quot;blocked:&quot; with a diagnosis.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

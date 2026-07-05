@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0012 i18n Extractor — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0012 · Build &amp; Ship</span>
+    <span class="stamp draft">draft</span>
+    <span class="tier">medium</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>i18n Extractor</h1>
+<p>Externalizes hardcoded user-facing strings into a translation catalog, one component (or screen) per pass. Each pass moves a coherent set of strings behind stable keys, swaps in the framework&#x27;s translation call, and verifies the UI still renders identically in the default locale — turning &quot;internationalize the whole app&quot; into a tracked, low-risk sweep.</p>
+<h2>When to reach for it</h2>
+<ul><li>An app with an i18n library installed but strings still hardcoded in the markup.</li><li>You want translation-readiness grown safely without a big-bang refactor.</li><li>Not a fit: choosing/wiring an i18n framework from scratch (do that first, by hand); apps with no test or visual check to confirm the default locale is unchanged.</li></ul>
+<h2>Setup</h2>
+<ol><li>Confirm the i18n framework works: one string already renders through <code>t(&quot;key&quot;)</code> in the default locale. Note the catalog path (e.g. <code>locales/en.json</code>) and the key convention.</li><li>Seed <code>state/i18n-ledger.json</code>: ``<code>json { &quot;catalog&quot;: &quot;locales/en.json&quot;, &quot;verify_command&quot;: &quot;&lt;test/build/visual check for the default locale&gt;&quot;, &quot;components&quot;: [ { &quot;path&quot;: &quot;src/components/Header.tsx&quot;, &quot;status&quot;: &quot;pending&quot; } ], &quot;accepted&quot;: [] } </code>`<code> List in-scope components; each starts </code>pending<code>. </code>accepted` holds intentional non-strings.</li></ol>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/i18n-extractor.md</code>. Run one pass with <code>/i18n-extractor</code>, or loop it with <code>/loop /i18n-extractor</code> (default 10m). It self-initializes on first run.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: i18n Extractor — externalize one component&#x27;s strings per pass
+---
+You are one pass of an i18n-extraction loop. Files are your only memory; assume amnesia.
+
+0. If state/i18n-ledger.json does not exist: confirm the i18n framework renders one t(&quot;key&quot;), then create state/i18n-ledger.json as { &quot;catalog&quot;: &quot;locales/en.json&quot;, &quot;verify_command&quot;: &quot;&quot;, &quot;components&quot;: [], &quot;accepted&quot;: [] }; STOP and ask me to set verify_command and list in-scope components, and re-run.
+1. Read state/i18n-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no component is &quot;pending&quot;: append &quot;I18N SWEEP CLEAN&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE &quot;pending&quot; component. Find every user-facing hardcoded string in it: visible
+   text, labels, placeholders, aria-labels, titles, alt text, error/toast messages.
+   IGNORE non-user strings: keys, enum values, test ids, class names, log lines, URLs.
+4. For each, add a stable, namespaced key to the catalog (e.g. &quot;header.signIn&quot;) with the
+   current English text as the value, and replace the literal with the framework&#x27;s
+   translation call. Handle interpolation and pluralization with the framework&#x27;s features,
+   never string concatenation. Keep keys meaningful (by role, not by English words, so a
+   copy tweak doesn&#x27;t churn the key). If a &quot;string&quot; is genuinely not translatable (a brand
+   name, a code sample), leave it and record it under &quot;accepted&quot; with a reason.
+5. Verify: run &quot;verify_command&quot;. The default locale must render EXACTLY as before — same
+   text, same layout. Any diff you caused is a bug: fix it (usually a missed interpolation
+   or a wrong key). Do not change wording while extracting; extraction is not copy-editing.
+6. Mark the component &quot;done&quot;. Append a JOURNAL.md entry: component, strings extracted, keys
+   added, anything left &quot;accepted&quot;. Commit: &quot;i18n({component}): extract {N} strings&quot;. Stop.
+
+Hard rules: one component per pass; never change the visible default-locale text while
+extracting; no string concatenation for sentences (use interpolation/plurals); non-user
+strings stay hardcoded; an untranslatable literal is &quot;accepted&quot; with a reason, not forced.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of an i18n-extraction loop. Files are your only memory; assume amnesia.
+
+1. Read state/i18n-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no component is &quot;pending&quot;: append &quot;I18N SWEEP CLEAN&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE &quot;pending&quot; component. Find every user-facing hardcoded string in it: visible
+   text, labels, placeholders, aria-labels, titles, alt text, error/toast messages.
+   IGNORE non-user strings: keys, enum values, test ids, class names, log lines, URLs.
+4. For each, add a stable, namespaced key to the catalog (e.g. &quot;header.signIn&quot;) with the
+   current English text as the value, and replace the literal with the framework&#x27;s
+   translation call. Handle interpolation and pluralization with the framework&#x27;s features,
+   never string concatenation. Keep keys meaningful (by role, not by English words, so a
+   copy tweak doesn&#x27;t churn the key). If a &quot;string&quot; is genuinely not translatable (a brand
+   name, a code sample), leave it and record it under &quot;accepted&quot; with a reason.
+5. Verify: run &quot;verify_command&quot;. The default locale must render EXACTLY as before — same
+   text, same layout. Any diff you caused is a bug: fix it (usually a missed interpolation
+   or a wrong key). Do not change wording while extracting; extraction is not copy-editing.
+6. Mark the component &quot;done&quot;. Append a JOURNAL.md entry: component, strings extracted, keys
+   added, anything left &quot;accepted&quot;. Commit: &quot;i18n({component}): extract {N} strings&quot;. Stop.
+
+Hard rules: one component per pass; never change the visible default-locale text while
+extracting; no string concatenation for sentences (use interpolation/plurals); non-user
+strings stay hardcoded; an untranslatable literal is &quot;accepted&quot; with a reason, not forced.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Run unattended loops in a container or dedicated VM with only the project mounted; git is the undo button. <code>--permission-mode acceptEdits</code> when supervising — extraction touches real markup, so watching early passes catches over-eager replacement of non-user strings.</p>
+<h2>Stop condition</h2>
+<p>Every in-scope component is <code>done</code> (or its strings <code>accepted</code>) → the loop writes &quot;I18N SWEEP CLEAN&quot;, creates STOP, and halts. The catalog is now translation-ready: hand <code>locales/en.json</code> to translators for other locales. Re-seed <code>components</code> after new UI lands and clear STOP.</p>
+<h2>Failure modes</h2>
+<ul><li><strong>Wording drift during extraction</strong> (silently &quot;improving&quot; copy) → banned; the default locale must render identically. Copy changes are a separate, deliberate task.</li><li><strong>Over-extraction</strong> (keys, enums, log lines) → the &quot;user-facing only&quot; rule + the <code>accepted</code> list keep non-user strings hardcoded and the catalog clean.</li><li><strong>Concatenated sentences</strong> (untranslatable in many languages) → interpolation/plural rules required; grammatical order and plurals differ across locales.</li><li><strong>Key churn</strong> (keys named after English text) → keys are named by role, so re-wording a string doesn&#x27;t rename its key and break every locale.</li></ul>
+<h2>Variations</h2>
+<ul><li>Extract-and-pseudolocalize: add a pseudo-locale that accents/pads every value, so a later visual pass surfaces untranslated leftovers and layouts that break on longer strings.</li><li>Framework-native mode: for message-extraction toolchains (e.g. FormatJS/gettext), run the extractor after each pass so the catalog is generated, not hand-maintained.</li></ul>
+<h2>Review log</h2>
+<p>_(reviewers append here)_</p>
+  <pre id="cmd" hidden>---
+description: i18n Extractor — externalize one component&#x27;s strings per pass
+---
+You are one pass of an i18n-extraction loop. Files are your only memory; assume amnesia.
+
+0. If state/i18n-ledger.json does not exist: confirm the i18n framework renders one t(&quot;key&quot;), then create state/i18n-ledger.json as { &quot;catalog&quot;: &quot;locales/en.json&quot;, &quot;verify_command&quot;: &quot;&quot;, &quot;components&quot;: [], &quot;accepted&quot;: [] }; STOP and ask me to set verify_command and list in-scope components, and re-run.
+1. Read state/i18n-ledger.json and the last 30 lines of JOURNAL.md.
+2. If no component is &quot;pending&quot;: append &quot;I18N SWEEP CLEAN&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE &quot;pending&quot; component. Find every user-facing hardcoded string in it: visible
+   text, labels, placeholders, aria-labels, titles, alt text, error/toast messages.
+   IGNORE non-user strings: keys, enum values, test ids, class names, log lines, URLs.
+4. For each, add a stable, namespaced key to the catalog (e.g. &quot;header.signIn&quot;) with the
+   current English text as the value, and replace the literal with the framework&#x27;s
+   translation call. Handle interpolation and pluralization with the framework&#x27;s features,
+   never string concatenation. Keep keys meaningful (by role, not by English words, so a
+   copy tweak doesn&#x27;t churn the key). If a &quot;string&quot; is genuinely not translatable (a brand
+   name, a code sample), leave it and record it under &quot;accepted&quot; with a reason.
+5. Verify: run &quot;verify_command&quot;. The default locale must render EXACTLY as before — same
+   text, same layout. Any diff you caused is a bug: fix it (usually a missed interpolation
+   or a wrong key). Do not change wording while extracting; extraction is not copy-editing.
+6. Mark the component &quot;done&quot;. Append a JOURNAL.md entry: component, strings extracted, keys
+   added, anything left &quot;accepted&quot;. Commit: &quot;i18n({component}): extract {N} strings&quot;. Stop.
+
+Hard rules: one component per pass; never change the visible default-locale text while
+extracting; no string concatenation for sentences (use interpolation/plurals); non-user
+strings stay hardcoded; an untranslatable literal is &quot;accepted&quot; with a reason, not forced.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

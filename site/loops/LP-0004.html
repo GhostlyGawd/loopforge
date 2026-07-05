@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0004 Docs Gardener — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0004 · Docs &amp; Writing</span>
+    <span class="stamp reviewed">reviewed</span>
+    <span class="tier">medium</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>Docs Gardener</h1>
+<p>Keeps documentation truthful against a moving codebase. Alternates between auditing (finding claims that drifted from reality) and mending (fixing one drifted claim per pass, verified against the code).</p>
+<h2>When to reach for it</h2>
+<ul><li>Docs exist but nobody trusts them.</li><li>After a big refactor or API change.</li><li>Not a fit: writing docs from zero (use a builder loop with a docs spec instead).</li></ul>
+<h2>Setup</h2>
+<p>Create <code>state/docs-audit.md</code> with sections <code>## Unverified</code>, <code>## Broken</code>, <code>## Fixed</code>. List every doc file under <code>## Unverified</code>.</p>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/docs-gardener.md</code>. Run one pass with <code>/docs-gardener</code>, or loop it with <code>/loop /docs-gardener</code> (default 10m). It self-initializes on first run.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: Docs Gardener — audit or mend one doc claim per pass
+---
+You are one pass of a docs-gardening loop. Files are your only memory.
+
+0. If state/docs-audit.md does not exist: create it with sections ## Unverified, ## Broken, and ## Fixed, and list every doc file under ## Unverified.
+1. Read state/docs-audit.md and the last 30 lines of JOURNAL.md.
+2. Mode select:
+   - If ## Broken has entries → MEND mode.
+   - Else if ## Unverified has entries → AUDIT mode.
+   - Else → run one final skim of the newest 5 commits for doc-relevant changes; if
+     none, append &quot;GARDEN CLEAN&quot; to the audit file, create STOP, commit, exit.
+3. AUDIT mode: take ONE file from ## Unverified. Check every testable claim in it
+   against the actual code (commands run? flags exist? examples execute? names match?).
+   Move the file to ## Fixed if clean, or list each broken claim under ## Broken with
+   file, claim, and evidence. Do not fix anything in this mode.
+4. MEND mode: take ONE claim from ## Broken. Determine the truth from the code, fix the
+   doc (or the code, if the doc describes intended behavior the code lost — say which
+   and why in the journal). Verify examples by running them where possible. Move the
+   claim to ## Fixed.
+5. Append a JOURNAL.md entry. Commit: &quot;docs(audit|mend): {what}&quot;. Stop.
+
+Hard rules: one file audited or one claim mended per pass; never delete a doc to
+&quot;fix&quot; it without recording the deletion rationale under ## Fixed; examples that can run
+must be run.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of a docs-gardening loop. Files are your only memory.
+
+1. Read state/docs-audit.md and the last 30 lines of JOURNAL.md.
+2. Mode select:
+   - If ## Broken has entries → MEND mode.
+   - Else if ## Unverified has entries → AUDIT mode.
+   - Else → run one final skim of the newest 5 commits for doc-relevant changes; if
+     none, append &quot;GARDEN CLEAN&quot; to the audit file, create STOP, commit, exit.
+3. AUDIT mode: take ONE file from ## Unverified. Check every testable claim in it
+   against the actual code (commands run? flags exist? examples execute? names match?).
+   Move the file to ## Fixed if clean, or list each broken claim under ## Broken with
+   file, claim, and evidence. Do not fix anything in this mode.
+4. MEND mode: take ONE claim from ## Broken. Determine the truth from the code, fix the
+   doc (or the code, if the doc describes intended behavior the code lost — say which
+   and why in the journal). Verify examples by running them where possible. Move the
+   claim to ## Fixed.
+5. Append a JOURNAL.md entry. Commit: &quot;docs(audit|mend): {what}&quot;. Stop.
+
+Hard rules: one file audited or one claim mended per pass; never delete a doc to
+&quot;fix&quot; it without recording the deletion rationale under ## Fixed; examples that can run
+must be run.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Container or dedicated VM for unattended runs.</p>
+<h2>Stop condition</h2>
+<p>Both queues empty and a final commit-skim clean → GARDEN CLEAN, STOP created. Re-seed <code>## Unverified</code> any time to garden again.</p>
+<h2>Failure modes</h2>
+<ul><li><strong>Doc vs code: which is right?</strong> → prompt forces an explicit call with reasoning in the journal; a human can veto between runs.</li><li><strong>Unrunnable examples</strong> (need creds, external services) → verified by inspection and flagged <code>unverifiable:</code> rather than silently trusted.</li><li><strong>Audit finds hundreds of breaks</strong> → fine; MEND mode metabolizes them one per pass.</li></ul>
+<h2>Variations</h2>
+<ul><li>Point it at README-only for a quick truthfulness pass.</li><li>Inverse mode: audit code comments against behavior instead of docs.</li></ul>
+<h2>Review log</h2>
+<ul><li>review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 5 · guardrails 4 · copy-paste 5 → avg 4.83. draft → reviewed. Canonical candidate; axis 5 softer by domain (inspection, not a green gate). Full pass: reviews/review-001.md.</li></ul>
+  <pre id="cmd" hidden>---
+description: Docs Gardener — audit or mend one doc claim per pass
+---
+You are one pass of a docs-gardening loop. Files are your only memory.
+
+0. If state/docs-audit.md does not exist: create it with sections ## Unverified, ## Broken, and ## Fixed, and list every doc file under ## Unverified.
+1. Read state/docs-audit.md and the last 30 lines of JOURNAL.md.
+2. Mode select:
+   - If ## Broken has entries → MEND mode.
+   - Else if ## Unverified has entries → AUDIT mode.
+   - Else → run one final skim of the newest 5 commits for doc-relevant changes; if
+     none, append &quot;GARDEN CLEAN&quot; to the audit file, create STOP, commit, exit.
+3. AUDIT mode: take ONE file from ## Unverified. Check every testable claim in it
+   against the actual code (commands run? flags exist? examples execute? names match?).
+   Move the file to ## Fixed if clean, or list each broken claim under ## Broken with
+   file, claim, and evidence. Do not fix anything in this mode.
+4. MEND mode: take ONE claim from ## Broken. Determine the truth from the code, fix the
+   doc (or the code, if the doc describes intended behavior the code lost — say which
+   and why in the journal). Verify examples by running them where possible. Move the
+   claim to ## Fixed.
+5. Append a JOURNAL.md entry. Commit: &quot;docs(audit|mend): {what}&quot;. Stop.
+
+Hard rules: one file audited or one claim mended per pass; never delete a doc to
+&quot;fix&quot; it without recording the deletion rationale under ## Fixed; examples that can run
+must be run.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

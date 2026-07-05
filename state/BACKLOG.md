@@ -44,8 +44,8 @@ items added per iteration.
       → shipped i10 as LP-0009 Changelog Scribe.
 - [x] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
       → shipped i11 as LP-0010 A11y Sweeper. Library hits 10 loops (M1 count).
-- [ ] P1 Per-loop detail pages on the site (proposal ADR first; template change).
-      → ADR-005 proposed i16; ready for an implementing pass (two-iteration rule satisfied next pass).
+- [x] P1 Per-loop detail pages on the site — implemented i30 (ADR-005): tap a card → full
+      end-to-end detail page (site/loops/<id>.html) with the copyable command block.
 - [x] P1 Add `related:` cross-links across all seed loops.
       → i12: bidirectional clusters (maintenance/testing/docs); all links resolve.
 - [ ] P2 CONTRIBUTING.md for humans who want to submit loops.
