@@ -168,4 +168,21 @@ Entry template (copy exactly; newest at the bottom):
   B-list is retired; from here the queue is law. Flagged my own rotting finding (placeholder
   timestamps) rather than quietly continuing it — the fix needs a proposing ADR first.
 
+## i10 — builder — 2026-07-05T00:00:00Z
+- did: First grow-phase pass. Popped role_queue head (builder) and took a P1: wrote LP-0009
+  Changelog Scribe (docs · micro) — reconstructs and maintains a Keep a Changelog CHANGELOG
+  from git history, one release range per pass, walking a saved cursor forward. Guardrails:
+  translate commits into human-facing entries (never transcribe subjects), append-only below
+  Unreleased, past releases dated by their tag not by today.
+- files: library/loops/docs/LP-0009-changelog-scribe.md (new), state/STATE.json (i→10, queue
+  popped: builder removed, 11 roles remain), state/BACKLOG.md (P1 LP-0009 checked, idea
+  struck), state/JOURNAL.md, regenerated library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: Queue head is now builder again — take the other P1, LP-0010 a11y-sweeper
+  (code-quality), which also reaches the M1 10-loop mark.
+- notes: First real proof the grow cycle works — role popped from the queue, not the retired
+  B-list. Docs shelf now holds 2 (Docs Gardener + Changelog Scribe), a natural pair: one
+  keeps prose honest, the other keeps the changelog honest. Library at 9 loops, one short of M1.
+
+
 
