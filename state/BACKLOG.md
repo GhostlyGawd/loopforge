@@ -33,20 +33,22 @@ items added per iteration.
 ## Grow (worked after bootstrap)
 - [x] P1 LP-0009 changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)
       → shipped i10 as LP-0009 Changelog Scribe.
-- [ ] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
+- [x] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
+      → shipped i11 as LP-0010 A11y Sweeper. Library hits 10 loops (M1 count).
 - [ ] P1 Per-loop detail pages on the site (proposal ADR first; template change).
-- [ ] P1 Add `related:` cross-links across all seed loops.
+- [x] P1 Add `related:` cross-links across all seed loops.
+      → i12: bidirectional clusters (maintenance/testing/docs); all links resolve.
 - [ ] P2 CONTRIBUTING.md for humans who want to submit loops.
 - [ ] P2 A "hall of deprecated loops" section — the graveyard should teach.
 
 ## Loop ideas (Scout feeds this; Builders consume top-down)
 - ~~dependency-upgrader~~ — shipped i3 as LP-0006. (small · code-quality)
-- a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
+- ~~a11y-sweeper~~ — shipped i11 as LP-0010. (small · code-quality)
 - ~~changelog-scribe~~ — shipped i10 as LP-0009. (micro · docs)
 - ~~flake-hunter~~ — shipped i7 as LP-0008. (medium · testing)
-- api-client-generator — grow a typed client endpoint-by-endpoint from an OpenAPI spec. (medium · build)
+- ~~api-client-generator~~ — shipped i13 as LP-0011. (medium · build)
 - benchmark-optimizer — one profiled hotspot per pass, guarded by perf regression tests. (large · code-quality)
-- i18n-extractor — externalize one component's strings per pass. (medium · build)
+- ~~i18n-extractor~~ — shipped i15 as LP-0012. (medium · build)
 - security-walker — one OWASP category per pass with fixes + notes. (large · code-quality)
 - ~~data-janitor~~ — shipped i4 as LP-0007. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)

@@ -184,5 +184,77 @@ Entry template (copy exactly; newest at the bottom):
   B-list. Docs shelf now holds 2 (Docs Gardener + Changelog Scribe), a natural pair: one
   keeps prose honest, the other keeps the changelog honest. Library at 9 loops, one short of M1.
 
+## i11 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Took the last P1 loop idea: wrote LP-0010 A11y Sweeper
+  (code-quality · small) — one WCAG issue CLASS per pass across a web app (all missing alt,
+  then all unlabeled inputs, then contrast), verified by re-audit + a manual AT sanity check.
+  Guardrail: real semantic fixes only, never suppress a rule; false positives are "accepted"
+  with a reason. This brings the library to 10 loops — the M1 count.
+- files: library/loops/code-quality/LP-0010-a11y-sweeper.md (new), state/STATE.json (i→11,
+  queue popped), state/BACKLOG.md (P1 LP-0010 checked, idea struck), state/JOURNAL.md,
+  regenerated library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: Queue head is librarian — do the related: cross-link pass across the
+  seed loops (a standing P1) so the collection navigates as a web, not a list.
+- notes: M1 loop count reached (10). code-quality is now the fattest shelf (3: Polish Pass,
+  Dependency Upgrader, A11y Sweeper) — a coherent "keep existing code healthy" cluster.
 
+## i12 — librarian — 2026-07-05T00:00:00Z
+- did: Grow pass (popped librarian). Ran the related: cross-link pass so the library
+  navigates as a web, not a flat list. Made the main clusters bidirectional: maintenance
+  hub LP-0002 <-> {0004,0006,0007,0010}, testing LP-0003 <-> {0001,0008}, docs LP-0004 <->
+  0009, build LP-0001 <-> 0005. Verified every related id resolves. Bumped the four edited
+  entries to v0.1.2.
+- files: LP-0001/0002/0003/0004 (related + version), state/STATE.json (i->12, queue popped),
+  state/BACKLOG.md (P1 cross-links checked), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder — add a build-category loop (api-client-generator).
+- notes: Left two links deliberately one-way: LP-0005 (the meta root) -> 0002 and LP-0006 ->
+  0003 are "see also" pointers that need not be mutual. All ids resolve; no orphans.
+
+## i13 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0011 API Client Generator (build · medium) —
+  grows a typed API client one endpoint per pass from an OpenAPI spec: real schema-derived
+  types (never `any`), a deterministic mocked-transport test per method, spec gaps marked
+  blocked rather than guessed. Thickens the thin `build` shelf (was 1, now 2).
+- files: library/loops/build/LP-0011-api-client-generator.md (new), state/STATE.json
+  (i->13, queue popped), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated
+  library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: Queue head is reviewer — take the first canonical smoke-read (LP-0003,
+  per audit-001's cadence): an independent skeptical read to promote reviewed -> canonical.
+- notes: Related to LP-0001 (Spec-to-App): build the app, then generate the typed client for
+  the API it exposes or consumes. Froze-the-core rule mirrors the one-step discipline — a
+  pass adds an endpoint, it never rewrites the foundation under the other endpoints.
+
+## i14 — reviewer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped reviewer). First canonical promotion: independent smoke-read of
+  LP-0003 Coverage Climber (author i0; first score i8; this read i14 — independent of both).
+  Simulated iteration 1 (cold setup) and iteration N (amnesiac, adversarial); the 5.00 scores
+  held and no new weakness surfaced. Promoted reviewed -> canonical, bumped to v0.1.3, filed
+  reviews/review-002.md, appended the read to its Review log.
+- files: reviews/review-002.md (new), LP-0003 (status/version/Review log), state/STATE.json
+  (i->14, queue popped), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder — add another loop (e.g. i18n-extractor or
+  readme-gardener); LP-0001/0002/0004 remain canonical candidates for later reviewer passes.
+- notes: First `canonical` in the library (ratio: 1 canonical + 4 reviewed of 11 = 5/11
+  reviewed-or-better). LP-0003 is now the reference shape for incremental testing loops.
+  The card's status stamp on the site flips to the solid canonical treatment.
+
+## i15 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder), last of this batch. Wrote LP-0012 i18n Extractor
+  (build · medium) — externalizes user-facing strings one component per pass behind stable
+  role-named keys, using framework interpolation/plurals (never concatenation), and verifies
+  the default locale renders identically. Also refreshed STATE.notes, which still described
+  the pre-brand/bootstrap world.
+- files: library/loops/build/LP-0012-i18n-extractor.md (new), state/STATE.json (i->15, queue
+  popped, notes refreshed), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated
+  INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is designer — a site/voice polish pass, or take the audit-001
+  proposal to propose (ADR) per-loop detail pages.
+- notes: Library at 12 loops. `build` shelf now 3 (Spec-to-App, API Client, i18n). Related to
+  LP-0010 (A11y Sweeper): both sweep the UI component-by-component with a re-verify each pass —
+  a natural "frontend hardening" pair. Batch of 5 (i11-i15) complete; checkpoint next.
 

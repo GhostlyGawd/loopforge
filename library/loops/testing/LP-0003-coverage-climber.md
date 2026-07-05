@@ -3,13 +3,13 @@ id: LP-0003
 title: Coverage Climber
 category: testing
 tier: small
-status: reviewed
-version: 0.1.1
+status: canonical
+version: 0.1.3
 requires: [git, test runner with coverage reporting]
 stop_when: coverage meets the target recorded in state/coverage.json
 state_files: [state/coverage.json, JOURNAL.md]
 tags: [testing, coverage, safety-net]
-related: [LP-0001]
+related: [LP-0001, LP-0008]
 created: 2026-07-04
 updated: 2026-07-05
 ---
@@ -85,3 +85,4 @@ target and delete STOP to keep climbing.
 
 ## Review log
 - review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 5 · guardrails 5 · copy-paste 5 → avg 5.00. draft → reviewed. Strong canonical candidate; wants only the independent smoke-read. Full pass: reviews/review-001.md.
+- review-002 (i14, Lens): independent canonical smoke-read (simulated iteration 1 and iteration N; adversarial). Scores held; no new weaknesses. reviewed -> canonical. See reviews/review-002.md.

@@ -4,12 +4,12 @@ title: Spec-to-App Builder
 category: build
 tier: large
 status: reviewed
-version: 0.1.1
+version: 0.1.2
 requires: [git, a written spec, the project's runtime and test tooling]
 stop_when: every requirement in SPEC.md is checked off in state/progress.md and the full test suite passes
 state_files: [SPEC.md, state/progress.md, state/decisions.md, JOURNAL.md]
 tags: [greenfield, spec-driven, app]
-related: [LP-0003]
+related: [LP-0003, LP-0005]
 created: 2026-07-04
 updated: 2026-07-05
 ---
