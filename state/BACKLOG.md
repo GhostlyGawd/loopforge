@@ -14,8 +14,9 @@ items added per iteration.
       → LP-0006 Dependency Upgrader (code-quality · small).
 - [x] B4 (builder) Add loop LP-0007 — fill the emptiest category.
       → LP-0007 Data Janitor fills the new (empty) `data` shelf.
-- [ ] B5 (designer) **Naming Ceremony** per `charter/BRAND.md`. Name, ASCII wordmark,
+- [x] B5 (designer) **Naming Ceremony** per `charter/BRAND.md`. Name, ASCII wordmark,
       brand v1, ADR. Update STATE.json, README, site header copy.
+      → Named **Weft** (ADR-003). Wordmark + brand v1 in BRAND.md; site header now "WEFT".
 - [ ] B6 (designer) Apply brand v1 to the site: propose template changes as ADR first
       (two-iteration rule), or restyle within existing structure if no tooling change.
 - [ ] B7 (builder) Add loops LP-0008 and split follow-ups for 0009/0010 as P1 items.

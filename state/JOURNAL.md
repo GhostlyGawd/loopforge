@@ -82,3 +82,23 @@ Entry template (copy exactly; newest at the bottom):
   loop. Caught and fixed a duplicate `stop_when` key in the front matter before the gate.
   Signature guardrail is "raw is read-only; fixes are code" — it makes every pass fully
   reversible and the whole cleanup reproducible on the next data drop.
+
+## i5 — designer — 2026-07-05T00:00:00Z
+- did: Bootstrap B5, the Naming Ceremony. Weighed 10 candidates against the four tests
+  (pronounceable / unique-enough / meaningful-to-loops / good CLI word) and named the
+  system **Weft** — the thread a loom's shuttle carries across the warp on every repeated
+  pass; the accumulated cloth is the library. Drew the ASCII wordmark (survives a terminal),
+  defined the signature element (the weft line `>------------->`), and wrote brand v1
+  (6-value loom palette, all-monospace type, voice). Recorded the shortlist + reasoning as
+  ADR-003.
+- files: state/STATE.json (name null→"Weft", i→5), charter/BRAND.md (brand v1),
+  state/DECISIONS.md (ADR-003), README.md (retitled + wordmark), state/BACKLOG.md (B5),
+  state/JOURNAL.md, regenerated library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: B6 — apply brand v1 to the site template. ADR-003 already proposes the
+  restyle, so B6 may implement it under the two-iteration rule (cite ADR-003).
+- notes: Setting `name` flips the site title block, page title, and INDEX heading from
+  "UNNAMED"/"pre-brand" to "WEFT" with no template edit — that is the honest, allowed part
+  of applying a brand this pass. The palette change to tools/build.py is deliberately NOT
+  done here (two-iteration rule); it is B6's job. Bootstrap is now one item from done: B6
+  (brand→site), B7 (more loops), B8 (first review), B9 (audit → open grow phase) remain.

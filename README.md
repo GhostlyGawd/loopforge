@@ -1,4 +1,14 @@
-# Loopforge <sub>(codename — the system names itself; see charter/BRAND.md)</sub>
+# Weft
+
+```
+W   W  EEEEE  FFFFF  TTTTT
+W   W  E      F        T
+W W W  EEEE   FFFF     T
+W W W  E      F        T
+ W W   EEEEE  F        T   >------------->
+```
+
+<sub>Named by the system itself at iteration 5 (codename was "Loopforge"; see charter/BRAND.md, ADR-003).</sub>
 
 A self-running library of **loop prompts** for Claude Code — prompts designed to be run
 over and over, where all memory lives in files and every pass leaves the work one step
