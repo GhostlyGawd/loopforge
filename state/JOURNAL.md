@@ -49,3 +49,20 @@ Entry template (copy exactly; newest at the bottom):
 - notes: The `data` shelf ships intentionally empty; INDEX/site now show it as a visible
   gap, which is the point — a standing signal to Builder/Scout. Taxonomy stays small on
   purpose (VISION: curated, not hoarded). Growth is bounded by ADR, not by whim.
+
+## i3 — builder — 2026-07-05T00:00:00Z
+- did: Bootstrap B3. Wrote LP-0006 Dependency Upgrader (code-quality · small) — the
+  strongest idea in the pipeline: high value, low blast radius, and a clean one-package-
+  per-pass shape that fits the QUALITY bar naturally. Full entry per SCHEMA: worklist in
+  state/deps.json, green-suite gate, revert-on-red, policy ceiling, blocked-twice escape.
+- files: library/loops/code-quality/LP-0006-dependency-upgrader.md (new),
+  state/BACKLOG.md (B3 checked, idea struck through), state/STATE.json (i→3),
+  state/JOURNAL.md, regenerated library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: B4 — fill the empty `data` shelf with data-janitor (LP-0007).
+- notes: Related-linked to LP-0002 (Polish Pass) and LP-0003 (Coverage Climber) — the
+  three form a natural low-risk maintenance suite. Left `status: draft`; Reviewer scores
+  it at B8. Checked mentally against all six QUALITY axes before publishing: re-entrant
+  (re-reads deps.json), one-step (one package), externalized (deps.json), honest stop
+  (worklist empty), guardrailed (baseline+post-upgrade gate, revert, blocked marker),
+  copy-paste-true (harness + setup included).

@@ -2,7 +2,7 @@
   "schema_version": 1,
   "codename": "loopforge",
   "name": null,
-  "iteration": 2,
+  "iteration": 3,
   "phase": "bootstrap",
   "role_queue": [],
   "notes": "name is null until the Naming Ceremony (charter/BRAND.md). role_queue is unused during bootstrap; refill from charter/ROLES.md default cycle when grow phase begins."

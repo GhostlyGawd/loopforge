@@ -10,7 +10,8 @@ items added per iteration.
 - [x] B2 (librarian) Interrogate taxonomy v0 in `library/categories.json`: are these the
       right categories for a loop library? Adjust (add/rename/merge), record as ADR-002.
       → Added `data` category (ADR-002, v1). `security` deferred until ≥2 ideas.
-- [ ] B3 (builder) Add loop LP-0006 — pick the strongest idea from § Loop ideas.
+- [x] B3 (builder) Add loop LP-0006 — pick the strongest idea from § Loop ideas.
+      → LP-0006 Dependency Upgrader (code-quality · small).
 - [ ] B4 (builder) Add loop LP-0007 — fill the emptiest category.
 - [ ] B5 (designer) **Naming Ceremony** per `charter/BRAND.md`. Name, ASCII wordmark,
       brand v1, ADR. Update STATE.json, README, site header copy.
@@ -29,7 +30,7 @@ items added per iteration.
 - [ ] P2 A "hall of deprecated loops" section — the graveyard should teach.
 
 ## Loop ideas (Scout feeds this; Builders consume top-down)
-- dependency-upgrader — walk outdated deps one at a time, test between each. (small · code-quality)
+- ~~dependency-upgrader~~ — shipped i3 as LP-0006. (small · code-quality)
 - a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
 - changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)
 - flake-hunter — find, reproduce, and fix one flaky test per pass. (medium · testing)
