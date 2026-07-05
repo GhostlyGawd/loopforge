@@ -287,3 +287,18 @@ Entry template (copy exactly; newest at the bottom):
   — one guards behavior, the other guards speed. code-quality is now the deepest shelf (4).
   Library at 13 loops. "Report numbers, never vibes" is the guardrail that keeps it honest.
 
+## i18 — reviewer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped reviewer). Second canonical promotion: independent smoke-read of
+  LP-0002 Polish Pass (author i0; this read i18). Simulated iteration 1 and iteration N,
+  adversarially; the 4.83 scores held and the Declined-ledger pattern proved robust against
+  the bikeshedding failure mode. Promoted reviewed -> canonical, v0.1.1 -> 0.1.2, filed
+  reviews/review-003.md.
+- files: reviews/review-003.md (new), LP-0002 (status/version/Review log), state/STATE.json
+  (i->18, queue popped), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is scout — replenish the idea pipeline (several ideas have
+  been shipped/struck); pitch 3-5 fresh, deduped ideas.
+- notes: 2 canonical now (LP-0002, LP-0003). Reviewed-or-better = 5/13. The Declined-ledger
+  is emerging as a reusable pattern across "sweep until clean" loops (0002/0004/0010) — a
+  note for the Librarian if a patterns page ever gets built.
+

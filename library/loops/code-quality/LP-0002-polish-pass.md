@@ -3,7 +3,7 @@ id: LP-0002
 title: Polish Pass
 category: code-quality
 tier: micro
-status: reviewed
+status: canonical
 version: 0.1.2
 requires: [git, project linter/formatter, test suite]
 stop_when: a full sweep of the codebase finds nothing above the "worth fixing" bar
@@ -77,3 +77,4 @@ A pass that finds nothing worth fixing declares SWEEP CLEAN and creates STOP.
 
 ## Review log
 - review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 4 · guardrails 5 · copy-paste 5 → avg 4.83. draft → reviewed. Canonical candidate; stop bar is judgment-based but bounded by the Declined ledger. Full pass: reviews/review-001.md.
+- review-003 (i18, Lens): independent canonical smoke-read; scores held, Declined-ledger pattern validated. reviewed -> canonical. See reviews/review-003.md.
