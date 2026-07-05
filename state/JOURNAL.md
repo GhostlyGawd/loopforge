@@ -258,3 +258,17 @@ Entry template (copy exactly; newest at the bottom):
   LP-0010 (A11y Sweeper): both sweep the UI component-by-component with a re-verify each pass —
   a natural "frontend hardening" pair. Batch of 5 (i11-i15) complete; checkpoint next.
 
+## i16 — designer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped designer). Standing designer work as a proposal: wrote ADR-005
+  proposing per-loop detail pages (one static site/loops/<id>.html per entry, rendering the
+  full body incl. a copy-friendly Loop Prompt, in the Weft brand). It is a build.py TEMPLATE
+  change, so under the two-iteration rule this pass only proposes; a later pass implements.
+- files: state/DECISIONS.md (ADR-005 proposed), state/BACKLOG.md (P1 detail-pages annotated),
+  state/STATE.json (i->16, queue popped), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: Queue head is builder — add a loop; the implementing pass for ADR-005 can
+  come when a designer role next surfaces (queue has one more designer later).
+- notes: No template touched this pass — deliberately. This unblocks the standing P1
+  "per-loop detail pages" by giving it the required prior-iteration ADR. Raising real
+  copy-paste truth (readers get the prompt itself) is the point of the detail pages.
+
