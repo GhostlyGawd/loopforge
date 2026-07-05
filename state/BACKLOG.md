@@ -36,7 +36,7 @@ items added per iteration.
       the built-in `/loop /<slug>`. Design in ADR-007. Split:
   - [x] P0a Propose the `## Run it` command-form + self-init + site copy-button (ADR-007). — i26
   - [x] P0b Add `## Run it` to library/SCHEMA.md; converted the canon (LP-0002, LP-0003). — i27
-  - [ ] P0c Designer/Builder: implement build.py "Copy command" per card (cite ADR-007).
+  - [x] P0c build.py renders a "Copy /command" button per converted card (ADR-007). — i28
   - [ ] P0d Builders: convert the remaining loops to include `## Run it`, canon-first.
 - [ ] P1 Reviewer: clear the draft backlog (LP-0006…LP-0014) draft→reviewed before more
       canonical promotions — quality ratio fell to 0.36 (audit-002).

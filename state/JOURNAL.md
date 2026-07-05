@@ -429,3 +429,19 @@ Entry template (copy exactly; newest at the bottom):
 - notes: The command form makes the library deliver its own promise — copy one block, paste as
   a command, `/loop /coverage-climber`, done. Left the shell `## Harness` intact as the
   headless/CI path; the two are complementary, not redundant.
+
+## i28 — designer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped designer) on the P0. P0c: implemented the site's "Copy /command"
+  control. build.py now extracts each loop's `## Run it` command block (new run_command()),
+  passes it raw into the card DATA, and the card renders a weft-gold "Copy /command" button
+  that writes the command to the clipboard — shown only for converted loops, so the rollout is
+  incremental. Two-iteration rule satisfied (ADR-007 proposed i26, implemented i28).
+- files: tools/build.py (import re; run_command(); command in collect()+DATA; .copybtn CSS +
+  card button JS), state/STATE.json (i->28), state/BACKLOG.md (P0c done), state/JOURNAL.md,
+  regenerated INDEX + site.
+- validation: pass
+- next-suggestion: P0d — add `## Run it` to the remaining 15 loops; each gains its button on
+  the next build. Then re-score copy-paste-truth (reviewer) and merge → Vercel redeploys.
+- notes: Command is passed RAW (not html-escaped) because it is copied verbatim to the
+  clipboard, never rendered as innerHTML. LP-0002/LP-0003 now show the button; the other 15
+  show none until converted — a visible, honest progress bar of the rollout.
