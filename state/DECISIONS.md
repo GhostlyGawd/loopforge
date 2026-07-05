@@ -106,3 +106,25 @@ Template:
   proposals become live work: timestamp-honesty and the SCHEMA §4 / LP-0005 reconciliation
   each need their own proposing ADR before any tooling change (two-iteration rule); the
   canonical smoke-reads fold into grow-phase reviewer slots.
+
+## ADR-005 — Per-loop detail pages on the site (proposal) (i16, designer)
+- Status: proposed
+- Context: The catalog (site/index.html) is a single page of cards; each card shows a loop's
+  id, title, purpose, status, tier, tags, and stop condition, but there is nowhere to read
+  the actual Loop Prompt, Setup, Harness, or Failure modes without opening the raw markdown.
+  As the library grows past 12 loops toward M2 (50), "browse the cards, read the whole entry"
+  needs a real per-loop view. This is a `tools/build.py` TEMPLATE change, so the two-iteration
+  rule applies: this ADR proposes it; a later pass implements it.
+- Decision (proposed): Have build.py emit one static `site/loops/<id>.html` per entry from
+  the same parsed markdown — rendering the full body (When to reach for it, Setup, The Loop
+  Prompt in a copy-friendly block, Harness, Stop condition, Failure modes, Variations, Review
+  log) in the Weft brand, with a back-link to the index. Each index card's title links to its
+  detail page. Keep it fully static and self-contained (no client-side router, no external
+  deps) so it deploys to GitHub Pages unchanged. A minimal, dependency-free markdown-to-HTML
+  pass in build.py (stdlib only, per the tooling ethos) renders the body.
+- Consequences: First multi-file site output — build.py must write a `site/loops/` directory
+  and the Pages workflow already publishes all of `site/`, so no CI change is needed. Adds a
+  copy-paste path for the prompt itself (raising real-world "copy-paste truth"). Implementation
+  is a later designer/builder pass citing ADR-005; until then the index-only site is unchanged.
+  Deferred sub-questions for the implementing pass: syntax-highlighting (skip for v1 — plain
+  monospace), and whether to also render `related:` as links (yes, cheap and useful).

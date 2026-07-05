@@ -258,3 +258,76 @@ Entry template (copy exactly; newest at the bottom):
   LP-0010 (A11y Sweeper): both sweep the UI component-by-component with a re-verify each pass —
   a natural "frontend hardening" pair. Batch of 5 (i11-i15) complete; checkpoint next.
 
+## i16 — designer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped designer). Standing designer work as a proposal: wrote ADR-005
+  proposing per-loop detail pages (one static site/loops/<id>.html per entry, rendering the
+  full body incl. a copy-friendly Loop Prompt, in the Weft brand). It is a build.py TEMPLATE
+  change, so under the two-iteration rule this pass only proposes; a later pass implements.
+- files: state/DECISIONS.md (ADR-005 proposed), state/BACKLOG.md (P1 detail-pages annotated),
+  state/STATE.json (i->16, queue popped), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: Queue head is builder — add a loop; the implementing pass for ADR-005 can
+  come when a designer role next surfaces (queue has one more designer later).
+- notes: No template touched this pass — deliberately. This unblocks the standing P1
+  "per-loop detail pages" by giving it the required prior-iteration ADR. Raising real
+  copy-paste truth (readers get the prompt itself) is the point of the detail pages.
+
+## i17 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0013 Benchmark Optimizer (code-quality · large)
+  — profile-first performance loop: one measured hotspot per pass, single smallest change,
+  correctness suite is a hard gate, a change below threshold is reverted, and every kept win
+  ships a perf regression test so it can't silently rot. The library's first `large`
+  code-quality entry.
+- files: library/loops/code-quality/LP-0013-benchmark-optimizer.md (new), state/STATE.json
+  (i->17, queue popped), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is reviewer — take the next canonical smoke-read (LP-0002
+  Polish Pass, per the audit-001 cadence).
+- notes: Related to LP-0003 (Coverage Climber): both are measure-first loops guarded by tests
+  — one guards behavior, the other guards speed. code-quality is now the deepest shelf (4).
+  Library at 13 loops. "Report numbers, never vibes" is the guardrail that keeps it honest.
+
+## i18 — reviewer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped reviewer). Second canonical promotion: independent smoke-read of
+  LP-0002 Polish Pass (author i0; this read i18). Simulated iteration 1 and iteration N,
+  adversarially; the 4.83 scores held and the Declined-ledger pattern proved robust against
+  the bikeshedding failure mode. Promoted reviewed -> canonical, v0.1.1 -> 0.1.2, filed
+  reviews/review-003.md.
+- files: reviews/review-003.md (new), LP-0002 (status/version/Review log), state/STATE.json
+  (i->18, queue popped), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is scout — replenish the idea pipeline (several ideas have
+  been shipped/struck); pitch 3-5 fresh, deduped ideas.
+- notes: 2 canonical now (LP-0002, LP-0003). Reviewed-or-better = 5/13. The Declined-ledger
+  is emerging as a reusable pattern across "sweep until clean" loops (0002/0004/0010) — a
+  note for the Librarian if a patterns page ever gets built.
+
+## i19 — scout — 2026-07-05T00:00:00Z
+- did: Grow pass (popped scout). Replenished the idea pipeline, which had thinned as builders
+  shipped from it. Pitched 3 fresh, deduped ideas (capped at 3 per the backlog-sprawl rule):
+  migration-runner (data), type-tightener (code-quality), contract-tester (testing). Checked
+  each against the 13 existing loops so none duplicates: migrations != data-janitor cleaning;
+  type-tightener is narrower than Polish Pass; contract-tester != coverage/flake.
+- files: state/BACKLOG.md (3 ideas), state/STATE.json (i->19, queue popped), state/JOURNAL.md.
+- validation: pass
+- next-suggestion: Queue head is builder — take a pipeline idea (readme-gardener is the only
+  micro left; migration-runner would add depth to the thin data shelf).
+- notes: Targeted the emptiest shelves: data (1 loop) and testing gain candidates. Two older
+  ideas remain unbuilt (security-walker, readme-gardener). Pipeline is healthy again: 5 open
+  ideas across data/code-quality/testing/docs.
+
+## i20 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder), last of this batch. Wrote LP-0014 Migration Runner
+  (data · medium) — one ordered schema/data migration per pass, each with a tested up AND
+  down (reversibility proven by actually rolling back and re-applying), verified by an intent
+  query, pinned to a disposable DB, applied migrations immutable. Chose this over readme-
+  gardener, which would near-duplicate LP-0004 Docs Gardener's README mode (curated, not hoarded).
+- files: library/loops/data/LP-0014-migration-runner.md (new), state/STATE.json (i->20, queue
+  popped to [auditor]), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is auditor — time for audit-002 (14 loops in; check health,
+  role balance, and the open ADR-005/timestamp proposals), then the queue refills.
+- notes: Library at 14 loops. data shelf now 2 (Data Janitor + Migration Runner), a clean
+  "trust your data / evolve your schema" pair. Related to LP-0007. Batch of 5 (i16-i20) done;
+  checkpoint next. Consciously declined readme-gardener to avoid a near-duplicate.
+

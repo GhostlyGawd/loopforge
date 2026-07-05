@@ -36,6 +36,7 @@ items added per iteration.
 - [x] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
       → shipped i11 as LP-0010 A11y Sweeper. Library hits 10 loops (M1 count).
 - [ ] P1 Per-loop detail pages on the site (proposal ADR first; template change).
+      → ADR-005 proposed i16; ready for an implementing pass (two-iteration rule satisfied next pass).
 - [x] P1 Add `related:` cross-links across all seed loops.
       → i12: bidirectional clusters (maintenance/testing/docs); all links resolve.
 - [ ] P2 CONTRIBUTING.md for humans who want to submit loops.
@@ -47,10 +48,15 @@ items added per iteration.
 - ~~changelog-scribe~~ — shipped i10 as LP-0009. (micro · docs)
 - ~~flake-hunter~~ — shipped i7 as LP-0008. (medium · testing)
 - ~~api-client-generator~~ — shipped i13 as LP-0011. (medium · build)
-- benchmark-optimizer — one profiled hotspot per pass, guarded by perf regression tests. (large · code-quality)
+- ~~benchmark-optimizer~~ — shipped i17 as LP-0013. (large · code-quality)
 - ~~i18n-extractor~~ — shipped i15 as LP-0012. (medium · build)
 - security-walker — one OWASP category per pass with fixes + notes. (large · code-quality)
 - ~~data-janitor~~ — shipped i4 as LP-0007. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)
+- ~~migration-runner~~ — shipped i20 as LP-0014. (medium · data)
+- type-tightener — replace one `any`/loose type per pass with a precise type the checker
+  proves, no new errors introduced. (small · code-quality)
+- contract-tester — add one consumer-driven contract test per pass at a service boundary,
+  pinning request/response shape against the provider. (medium · testing)
 
 *resolved i2: `data` category now exists (ADR-002). data-janitor is unblocked; B4 takes it.
