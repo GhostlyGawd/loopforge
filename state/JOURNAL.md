@@ -184,5 +184,21 @@ Entry template (copy exactly; newest at the bottom):
   B-list. Docs shelf now holds 2 (Docs Gardener + Changelog Scribe), a natural pair: one
   keeps prose honest, the other keeps the changelog honest. Library at 9 loops, one short of M1.
 
+## i11 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Took the last P1 loop idea: wrote LP-0010 A11y Sweeper
+  (code-quality · small) — one WCAG issue CLASS per pass across a web app (all missing alt,
+  then all unlabeled inputs, then contrast), verified by re-audit + a manual AT sanity check.
+  Guardrail: real semantic fixes only, never suppress a rule; false positives are "accepted"
+  with a reason. This brings the library to 10 loops — the M1 count.
+- files: library/loops/code-quality/LP-0010-a11y-sweeper.md (new), state/STATE.json (i→11,
+  queue popped), state/BACKLOG.md (P1 LP-0010 checked, idea struck), state/JOURNAL.md,
+  regenerated library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: Queue head is librarian — do the related: cross-link pass across the
+  seed loops (a standing P1) so the collection navigates as a web, not a list.
+- notes: M1 loop count reached (10). code-quality is now the fattest shelf (3: Polish Pass,
+  Dependency Upgrader, A11y Sweeper) — a coherent "keep existing code healthy" cluster.
+
+
 
 

@@ -33,7 +33,8 @@ items added per iteration.
 ## Grow (worked after bootstrap)
 - [x] P1 LP-0009 changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)
       → shipped i10 as LP-0009 Changelog Scribe.
-- [ ] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
+- [x] P1 LP-0010 a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
+      → shipped i11 as LP-0010 A11y Sweeper. Library hits 10 loops (M1 count).
 - [ ] P1 Per-loop detail pages on the site (proposal ADR first; template change).
 - [ ] P1 Add `related:` cross-links across all seed loops.
 - [ ] P2 CONTRIBUTING.md for humans who want to submit loops.
@@ -41,7 +42,7 @@ items added per iteration.
 
 ## Loop ideas (Scout feeds this; Builders consume top-down)
 - ~~dependency-upgrader~~ — shipped i3 as LP-0006. (small · code-quality)
-- a11y-sweeper — one WCAG issue class per pass across a web app. (small · code-quality)
+- ~~a11y-sweeper~~ — shipped i11 as LP-0010. (small · code-quality)
 - ~~changelog-scribe~~ — shipped i10 as LP-0009. (micro · docs)
 - ~~flake-hunter~~ — shipped i7 as LP-0008. (medium · testing)
 - api-client-generator — grow a typed client endpoint-by-endpoint from an OpenAPI spec. (medium · build)

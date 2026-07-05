@@ -2,8 +2,8 @@
   "schema_version": 1,
   "codename": "loopforge",
   "name": "Weft",
-  "iteration": 10,
+  "iteration": 11,
   "phase": "grow",
-  "role_queue": ["builder", "librarian", "builder", "reviewer", "builder", "designer", "builder", "reviewer", "scout", "builder", "auditor"],
+  "role_queue": ["librarian", "builder", "reviewer", "builder", "designer", "builder", "reviewer", "scout", "builder", "auditor"],
   "notes": "name is null until the Naming Ceremony (charter/BRAND.md). role_queue is unused during bootstrap; refill from charter/ROLES.md default cycle when grow phase begins."
 }
