@@ -26,8 +26,9 @@ items added per iteration.
 - [x] B8 (reviewer) First review pass: score LP-0001…LP-0005 against QUALITY.md, file
       `reviews/review-001.md`, promote/demote statuses.
       → All five cleared the bar; draft → reviewed (quality ratio 0/8 → 5/8).
-- [ ] B9 (auditor) Audit #1 → `reviews/audit-001.md`. If sound: set phase to "grow",
+- [x] B9 (auditor) Audit #1 → `reviews/audit-001.md`. If sound: set phase to "grow",
       refill role_queue, record transition as ADR.
+      → Sound. Bootstrap closed; phase → grow, role_queue refilled (ADR-004).
 
 ## Grow (worked after bootstrap)
 - [ ] P1 LP-0009 changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)

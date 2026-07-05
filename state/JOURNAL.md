@@ -151,4 +151,21 @@ Entry template (copy exactly; newest at the bottom):
   LOOP.md (copy-paste axis = 3), which the validator accepts but SCHEMA §4 ("complete prompt
   in one fence") arguably does not — logged as a seed in review-001, not acted on here.
 
+## i9 — auditor — 2026-07-05T00:00:00Z
+- did: Bootstrap B9, the closing act. Filed audit-001: health metrics, drift check (state ↔
+  backlog ↔ journal ↔ commits all agree), one thing working (gate + two-iteration discipline
+  held for the brand restyle), one rotting (journal timestamps are placeholders), and three
+  ADR-draft proposals. System sound → closed bootstrap: phase → grow, refilled role_queue
+  from the ROLES default cycle, recorded the transition as ADR-004.
+- files: reviews/audit-001.md (new), state/DECISIONS.md (ADR-004), state/STATE.json
+  (i→9, phase→grow, role_queue filled), state/BACKLOG.md (B9), state/JOURNAL.md, regenerated
+  library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: First grow pass pops role_queue head = builder. Take a P1: LP-0009
+  changelog-scribe (docs) to lift the thin docs shelf.
+- notes: M1 is all but met — 8 loops (target 10), 5 reviewed (target ≥5 ✓), brand named +
+  applied ✓, first audit filed ✓. Two more loops reach the M1 loop count. The bootstrap
+  B-list is retired; from here the queue is law. Flagged my own rotting finding (placeholder
+  timestamps) rather than quietly continuing it — the fix needs a proposing ADR first.
+
 
