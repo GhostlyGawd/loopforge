@@ -7,8 +7,9 @@ items added per iteration.
 ## Bootstrap (do in order; role in parentheses)
 - [x] B1 (auditor) Run `python3 tools/validate.py && python3 tools/build.py`. Confirm
       green. Journal baseline stats: entry count by status/category, site built.
-- [ ] B2 (librarian) Interrogate taxonomy v0 in `library/categories.json`: are these the
+- [x] B2 (librarian) Interrogate taxonomy v0 in `library/categories.json`: are these the
       right categories for a loop library? Adjust (add/rename/merge), record as ADR-002.
+      → Added `data` category (ADR-002, v1). `security` deferred until ≥2 ideas.
 - [ ] B3 (builder) Add loop LP-0006 — pick the strongest idea from § Loop ideas.
 - [ ] B4 (builder) Add loop LP-0007 — fill the emptiest category.
 - [ ] B5 (designer) **Naming Ceremony** per `charter/BRAND.md`. Name, ASCII wordmark,
@@ -39,4 +40,4 @@ items added per iteration.
 - data-janitor — profile and clean one column/field per pass, rules logged. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)
 
-*requires a `data` category — Librarian decides in B2.
+*resolved i2: `data` category now exists (ADR-002). data-janitor is unblocked; B4 takes it.

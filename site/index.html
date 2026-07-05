@@ -73,7 +73,7 @@
   <span class="reg tl"></span><span class="reg tr"></span><span class="reg bl"></span><span class="reg br"></span>
   <header class="titleblock" aria-label="drawing title block">
     <div class="cell"><div class="k">Project</div><div class="v">UNNAMED</div></div>
-    <div class="cell"><div class="k">Iteration</div><div class="v">001</div></div>
+    <div class="cell"><div class="k">Iteration</div><div class="v">002</div></div>
     <div class="cell"><div class="k">Phase</div><div class="v small">bootstrap</div></div>
     <div class="cell"><div class="k">Loops on file</div><div class="v">005</div></div>
   </header>
@@ -83,6 +83,7 @@
     <button class="chip" data-cat="build" aria-pressed="false">Build &amp; Ship</button>
     <button class="chip" data-cat="code-quality" aria-pressed="false">Code Quality</button>
     <button class="chip" data-cat="testing" aria-pressed="false">Testing</button>
+    <button class="chip" data-cat="data" aria-pressed="false">Data</button>
     <button class="chip" data-cat="docs" aria-pressed="false">Docs &amp; Writing</button>
     <button class="chip" data-cat="meta" aria-pressed="false">Meta</button>
   </div>
@@ -91,12 +92,12 @@
   <footer>
     <span>Sheet 1 of 1 · scale 1:1 · drawn by the loop itself</span>
     <span>PRE-BRAND blueprint v0 — identity pending Naming Ceremony (charter/BRAND.md)</span>
-    <span>generated 2026-07-05 00:47Z by tools/build.py</span>
+    <span>generated 2026-07-05 00:49Z by tools/build.py</span>
   </footer>
 </div>
 <script>
 const DATA = [{"id": "LP-0001", "title": "Spec-to-App Builder", "category": "build", "tier": "large", "status": "draft", "tags": ["greenfield", "spec-driven", "app"], "purpose": "Turns a written specification into a working application, one requirement per pass. The spec is the contract; the progress file is the memory; the test suite is the judge.", "stop_when": "every requirement in SPEC.md is checked off in state/progress.md and the full test suite passes", "path": "library/loops/build/LP-0001-spec-to-app.md"}, {"id": "LP-0002", "title": "Polish Pass", "category": "code-quality", "tier": "micro", "status": "draft", "tags": ["refactor", "lint", "tidy", "low-risk"], "purpose": "The janitor loop. Each pass fixes exactly one small blemish \u2014 a lint warning, a dead import, a confusing name, a missing docstring \u2014 verified by tests, logged in a ledger. Cheap, safe, and endlessly repeatable.", "stop_when": "a full sweep of the codebase finds nothing above the &quot;worth fixing&quot; bar", "path": "library/loops/code-quality/LP-0002-polish-pass.md"}, {"id": "LP-0004", "title": "Docs Gardener", "category": "docs", "tier": "medium", "status": "draft", "tags": ["documentation", "drift", "maintenance"], "purpose": "Keeps documentation truthful against a moving codebase. Alternates between auditing (finding claims that drifted from reality) and mending (fixing one drifted claim per pass, verified against the code).", "stop_when": "a full audit pass finds zero broken claims in state/docs-audit.md", "path": "library/loops/docs/LP-0004-docs-gardener.md"}, {"id": "LP-0005", "title": "Library Grower", "category": "meta", "tier": "epic", "status": "draft", "tags": ["meta", "self-organizing", "curation", "multi-role"], "purpose": "The loop that grows a curated library \u2014 of prompts, patterns, recipes, components, anything entry-shaped \u2014 by rotating one agent through company roles: builder, reviewer, librarian, designer, auditor, scout. **This repository is the reference implementation: the loop you are reading about is the loop that maintains the file you are reading.**", "stop_when": "never by design \u2014 milestones advance, the loop continues (halt with STOP)", "path": "library/loops/meta/LP-0005-library-grower.md"}, {"id": "LP-0003", "title": "Coverage Climber", "category": "testing", "tier": "small", "status": "draft", "tags": ["testing", "coverage", "safety-net"], "purpose": "Raises real test coverage one meaningful test file at a time. Targets the riskiest untested code first, and refuses to game the metric.", "stop_when": "coverage meets the target recorded in state/coverage.json", "path": "library/loops/testing/LP-0003-coverage-climber.md"}];
-const CATS = {"build": "Build & Ship", "code-quality": "Code Quality", "testing": "Testing", "docs": "Docs & Writing", "meta": "Meta"};
+const CATS = {"build": "Build & Ship", "code-quality": "Code Quality", "testing": "Testing", "data": "Data", "docs": "Docs & Writing", "meta": "Meta"};
 const grid = document.getElementById('grid');
 const empty = document.getElementById('empty');
 const q = document.getElementById('q');
