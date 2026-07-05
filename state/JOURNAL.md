@@ -134,3 +134,21 @@ Entry template (copy exactly; newest at the bottom):
   flakes that erode trust in it. The banned-retry rule is the whole point: a retry hides a
   flake, and a hidden flake is worse than a visible one. Testing shelf now holds 2 loops.
 
+## i8 — reviewer — 2026-07-05T00:00:00Z
+- did: Bootstrap B8, the first review pass. Scored the five genesis loops (LP-0001…LP-0005)
+  against QUALITY.md's six axes, read as both iteration 1 and iteration N. All five cleared
+  the `reviewed` bar (avg ≥ 3.5, no axis < 3); none demoted. Promoted draft → reviewed,
+  bumped each to v0.1.1, recorded scores in each entry's Review log, and filed the full pass.
+- files: reviews/review-001.md (new), LP-0001/0002/0003/0004/0005 (status, version, updated,
+  Review log), state/BACKLOG.md (B8), state/STATE.json (i→8), state/JOURNAL.md, regenerated
+  library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: B9 — Auditor files audit-001, and if the system is sound, closes
+  bootstrap: phase → grow, refill role_queue, record the transition as an ADR.
+- notes: Quality ratio 0/8 → 5/8. LP-0003 scored a clean 5.00; four are canonical
+  candidates awaiting an independent smoke-read (a later reviewer pass, not this author's).
+  Surfaced one real tension for the Auditor/Librarian: LP-0005's prompt is by-reference to
+  LOOP.md (copy-paste axis = 3), which the validator accepts but SCHEMA §4 ("complete prompt
+  in one fence") arguably does not — logged as a seed in review-001, not acted on here.
+
+

@@ -23,8 +23,9 @@ items added per iteration.
       implementing ADR-003 (proposed i5, applied i6 — two-iteration rule satisfied).
 - [x] B7 (builder) Add loops LP-0008 and split follow-ups for 0009/0010 as P1 items.
       → LP-0008 Flake Hunter (testing · medium). Follow-ups filed as P1 below.
-- [ ] B8 (reviewer) First review pass: score LP-0001…LP-0005 against QUALITY.md, file
+- [x] B8 (reviewer) First review pass: score LP-0001…LP-0005 against QUALITY.md, file
       `reviews/review-001.md`, promote/demote statuses.
+      → All five cleared the bar; draft → reviewed (quality ratio 0/8 → 5/8).
 - [ ] B9 (auditor) Audit #1 → `reviews/audit-001.md`. If sound: set phase to "grow",
       refill role_queue, record transition as ADR.
 

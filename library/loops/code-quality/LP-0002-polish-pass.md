@@ -3,15 +3,15 @@ id: LP-0002
 title: Polish Pass
 category: code-quality
 tier: micro
-status: draft
-version: 0.1.0
+status: reviewed
+version: 0.1.1
 requires: [git, project linter/formatter, test suite]
 stop_when: a full sweep of the codebase finds nothing above the "worth fixing" bar
 state_files: [state/polish-ledger.md, JOURNAL.md]
 tags: [refactor, lint, tidy, low-risk]
 related: []
 created: 2026-07-04
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Polish Pass
@@ -76,4 +76,4 @@ A pass that finds nothing worth fixing declares SWEEP CLEAN and creates STOP.
 - Docstring-only mode, rename-only mode: constrain the blemish menu.
 
 ## Review log
-_(reviewers append here)_
+- review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 4 · guardrails 5 · copy-paste 5 → avg 4.83. draft → reviewed. Canonical candidate; stop bar is judgment-based but bounded by the Declined ledger. Full pass: reviews/review-001.md.
