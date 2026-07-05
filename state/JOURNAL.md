@@ -227,3 +227,18 @@ Entry template (copy exactly; newest at the bottom):
   the API it exposes or consumes. Froze-the-core rule mirrors the one-step discipline — a
   pass adds an endpoint, it never rewrites the foundation under the other endpoints.
 
+## i14 — reviewer — 2026-07-05T00:00:00Z
+- did: Grow pass (popped reviewer). First canonical promotion: independent smoke-read of
+  LP-0003 Coverage Climber (author i0; first score i8; this read i14 — independent of both).
+  Simulated iteration 1 (cold setup) and iteration N (amnesiac, adversarial); the 5.00 scores
+  held and no new weakness surfaced. Promoted reviewed -> canonical, bumped to v0.1.3, filed
+  reviews/review-002.md, appended the read to its Review log.
+- files: reviews/review-002.md (new), LP-0003 (status/version/Review log), state/STATE.json
+  (i->14, queue popped), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder — add another loop (e.g. i18n-extractor or
+  readme-gardener); LP-0001/0002/0004 remain canonical candidates for later reviewer passes.
+- notes: First `canonical` in the library (ratio: 1 canonical + 4 reviewed of 11 = 5/11
+  reviewed-or-better). LP-0003 is now the reference shape for incremental testing loops.
+  The card's status stamp on the site flips to the solid canonical treatment.
+
