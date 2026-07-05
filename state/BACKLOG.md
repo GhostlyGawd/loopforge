@@ -12,7 +12,8 @@ items added per iteration.
       → Added `data` category (ADR-002, v1). `security` deferred until ≥2 ideas.
 - [x] B3 (builder) Add loop LP-0006 — pick the strongest idea from § Loop ideas.
       → LP-0006 Dependency Upgrader (code-quality · small).
-- [ ] B4 (builder) Add loop LP-0007 — fill the emptiest category.
+- [x] B4 (builder) Add loop LP-0007 — fill the emptiest category.
+      → LP-0007 Data Janitor fills the new (empty) `data` shelf.
 - [ ] B5 (designer) **Naming Ceremony** per `charter/BRAND.md`. Name, ASCII wordmark,
       brand v1, ADR. Update STATE.json, README, site header copy.
 - [ ] B6 (designer) Apply brand v1 to the site: propose template changes as ADR first
@@ -38,7 +39,7 @@ items added per iteration.
 - benchmark-optimizer — one profiled hotspot per pass, guarded by perf regression tests. (large · code-quality)
 - i18n-extractor — externalize one component's strings per pass. (medium · build)
 - security-walker — one OWASP category per pass with fixes + notes. (large · code-quality)
-- data-janitor — profile and clean one column/field per pass, rules logged. (small · data)*
+- ~~data-janitor~~ — shipped i4 as LP-0007. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)
 
 *resolved i2: `data` category now exists (ADR-002). data-janitor is unblocked; B4 takes it.

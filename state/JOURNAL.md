@@ -66,3 +66,19 @@ Entry template (copy exactly; newest at the bottom):
   (re-reads deps.json), one-step (one package), externalized (deps.json), honest stop
   (worklist empty), guardrailed (baseline+post-upgrade gate, revert, blocked marker),
   copy-paste-true (harness + setup included).
+
+## i4 — builder — 2026-07-05T00:00:00Z
+- did: Bootstrap B4. Filled the emptiest category — the `data` shelf added at i2, which had
+  zero entries — with LP-0007 Data Janitor (data · small). One-column-per-pass cleaning
+  where the raw snapshot is read-only, every fix is reproducible transform code (never a
+  manual data edit), and the pipeline must be deterministic (twice-identical output gate).
+- files: library/loops/data/LP-0007-data-janitor.md (new), state/BACKLOG.md (B4 checked,
+  idea struck through), state/STATE.json (i→4), state/JOURNAL.md, regenerated
+  library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: B5 — Designer runs the Naming Ceremony (charter/BRAND.md): the system
+  finally chooses its own name, wordmark, and brand v1.
+- notes: The `data` shelf is now populated, so no category is empty — every shelf has ≥1
+  loop. Caught and fixed a duplicate `stop_when` key in the front matter before the gate.
+  Signature guardrail is "raw is read-only; fixes are code" — it makes every pass fully
+  reversible and the whole cleanup reproducible on the next data drop.
