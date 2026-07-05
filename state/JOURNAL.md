@@ -461,3 +461,20 @@ Entry template (copy exactly; newest at the bottom):
 - notes: Built the conversions by reusing each loop's existing prompt rather than rewriting —
   faithful and consistent. The shell `## Harness` stays as the headless/CI path. P0 complete:
   the library finally delivers "copy it, run it" in a single paste.
+
+## i30 — designer — 2026-07-05T00:00:00Z
+- did: Grow pass. Implemented ADR-005 (proposed i16 — two-iteration rule satisfied): per-loop
+  detail pages. Added a tiny stdlib markdown renderer to build.py (render_markdown/_inline) and
+  build_details(), which writes one site/loops/<id>.html per loop — the full entry end-to-end
+  (purpose, when, setup, the copyable Run-it command, the loop prompt, harness, stop, failure
+  modes) in the Weft brand, with a back-link and a Copy /command button. Index cards are now
+  clickable (title link + whole-card click) and open the detail page. First multi-file site output.
+- files: tools/build.py (render_markdown, DETAIL_TEMPLATE, build_details, card link + click,
+  card CSS), state/STATE.json (i->30), state/BACKLOG.md (detail-pages P1 done), state/JOURNAL.md,
+  regenerated INDEX + site + 17 site/loops/*.html.
+- validation: pass
+- next-suggestion: Reviewer re-scores copy-paste-truth (review-004 promised it) now that loops
+  are one-paste AND fully readable per loop — several drafts should clear draft→reviewed.
+- notes: Took the designer role for this user-directed site feature (out of strict queue turn);
+  the Pages workflow + Vercel both publish all of site/, so the new site/loops/ deploys with no
+  CI change. Renderer is stdlib-only, matching the tooling ethos.

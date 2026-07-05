@@ -2,10 +2,9 @@
   "schema_version": 1,
   "codename": "loopforge",
   "name": "Weft",
-  "iteration": 29,
+  "iteration": 30,
   "phase": "grow",
   "role_queue": [
-    "reviewer",
     "scout",
     "builder",
     "auditor"

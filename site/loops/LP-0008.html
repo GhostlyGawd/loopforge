@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0008 Flake Hunter — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0008 · Testing</span>
+    <span class="stamp draft">draft</span>
+    <span class="tier">medium</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>Flake Hunter</h1>
+<p>Finds, reproduces, and kills one flaky test per pass. A flake is a test that passes and fails on the same code — the most corrosive thing in a suite, because it teaches everyone to ignore red. This loop makes flakiness a tracked, closeable queue instead of ambient noise: reproduce the nondeterminism, fix the real cause, and only quarantine when a fix is genuinely out of reach — never silently.</p>
+<h2>When to reach for it</h2>
+<ul><li>A suite where reds are routinely re-run until green (&quot;just hit retry&quot;).</li><li>CI that is slow or distrusted because failures are often noise.</li><li>Not a fit: a genuinely broken feature (that is a real failure, not a flake — fix the code); a suite with no way to run a single test in a loop (add that first).</li></ul>
+<h2>Setup</h2>
+<ol><li>Note the command to run ONE test repeatedly (e.g. <code>pytest -k &lt;id&gt; --count 50</code>, <code>go test -run &lt;T&gt; -count=50</code>, <code>jest &lt;file&gt; -t &quot;&lt;name&gt;&quot;</code> in a loop).</li><li>Seed <code>state/flakes.json</code> from CI history or a known-bad list: ``<code>json { &quot;reruns&quot;: 50, &quot;suspects&quot;: [ { &quot;test&quot;: &quot;&lt;fully-qualified test id&gt;&quot;, &quot;status&quot;: &quot;open&quot;, &quot;seen&quot;: &quot;&lt;where/when&gt;&quot; } ], &quot;fixed&quot;: [], &quot;quarantined&quot;: [] } </code>`<code> </code>status<code> is one of </code>open<code> | </code>fixed<code> | </code>quarantined<code> | </code>accepted`.</li></ol>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/flake-hunter.md</code>. Run one pass with <code>/flake-hunter</code>, or loop it with <code>/loop /flake-hunter</code> (default 10m). It self-initializes on first run.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: Flake Hunter — reproduce and fix one flaky test per pass
+---
+You are one pass of a flake-hunting loop. Files are your only memory; assume amnesia.
+
+0. If state/flakes.json does not exist: create it as { &quot;reruns&quot;: 50, &quot;suspects&quot;: [], &quot;fixed&quot;: [], &quot;quarantined&quot;: [] }, then STOP and ask me to add suspect test ids (or grant CI access to mine them), and re-run.
+1. Read state/flakes.json and the last 30 lines of JOURNAL.md.
+2. If no suspect has status &quot;open&quot;: append &quot;NO OPEN FLAKES&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE &quot;open&quot; suspect. If the suspects list is empty but you have CI access, mine the
+   last N failed runs for one test that also has green runs on the same commit, add it as
+   a suspect, and take it.
+4. Reproduce the flake: run that single test &quot;reruns&quot; times (from state). Record the
+   observed failure rate (e.g. 7/50). If it passes 100%, it is not reproducibly flaky from
+   here — mark it &quot;accepted: not reproduced locally (Nx)&quot; with the date and move on; do not
+   guess at fixes for something you cannot see fail.
+5. Diagnose the ONE root cause from the failure output. The usual suspects: test-order or
+   shared-state coupling, real time / timezone, unseeded randomness, unawaited async or
+   fixed sleeps, network/filesystem/DB assumptions, floating-point equality. Write the
+   cause in the journal in one sentence.
+6. Fix the CAUSE, not the symptom: seed the RNG, inject a clock, await the condition
+   instead of sleeping, isolate the shared fixture, stub the boundary. Do NOT add blind
+   retries or bump timeouts to paper over it. Re-run the single test &quot;reruns&quot; times: it
+   must now pass 100%. Then run the surrounding file to confirm no collateral damage.
+   - If you genuinely cannot fix it this pass: quarantine it with the runner&#x27;s skip/exclude
+     mechanism, tagged with a link to the diagnosis, and set status &quot;quarantined&quot;. A
+     quarantine is a tracked debt, never a silent skip.
+7. Update state/flakes.json (move the suspect to fixed/quarantined, or mark accepted).
+   Append a JOURNAL.md entry: test, failure rate before, root cause, fix or quarantine,
+   rate after. Commit: &quot;flake({test}): {cause} — {N/50}→0/50&quot; or &quot;flake({test}): quarantined&quot;.
+   Stop.
+
+Hard rules: one flake per pass; fix the cause, never add retries or inflate timeouts to
+hide it; never delete a test to make red go away; a quarantine must carry a diagnosis and
+a status, so the debt stays visible.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of a flake-hunting loop. Files are your only memory; assume amnesia.
+
+1. Read state/flakes.json and the last 30 lines of JOURNAL.md.
+2. If no suspect has status &quot;open&quot;: append &quot;NO OPEN FLAKES&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE &quot;open&quot; suspect. If the suspects list is empty but you have CI access, mine the
+   last N failed runs for one test that also has green runs on the same commit, add it as
+   a suspect, and take it.
+4. Reproduce the flake: run that single test &quot;reruns&quot; times (from state). Record the
+   observed failure rate (e.g. 7/50). If it passes 100%, it is not reproducibly flaky from
+   here — mark it &quot;accepted: not reproduced locally (Nx)&quot; with the date and move on; do not
+   guess at fixes for something you cannot see fail.
+5. Diagnose the ONE root cause from the failure output. The usual suspects: test-order or
+   shared-state coupling, real time / timezone, unseeded randomness, unawaited async or
+   fixed sleeps, network/filesystem/DB assumptions, floating-point equality. Write the
+   cause in the journal in one sentence.
+6. Fix the CAUSE, not the symptom: seed the RNG, inject a clock, await the condition
+   instead of sleeping, isolate the shared fixture, stub the boundary. Do NOT add blind
+   retries or bump timeouts to paper over it. Re-run the single test &quot;reruns&quot; times: it
+   must now pass 100%. Then run the surrounding file to confirm no collateral damage.
+   - If you genuinely cannot fix it this pass: quarantine it with the runner&#x27;s skip/exclude
+     mechanism, tagged with a link to the diagnosis, and set status &quot;quarantined&quot;. A
+     quarantine is a tracked debt, never a silent skip.
+7. Update state/flakes.json (move the suspect to fixed/quarantined, or mark accepted).
+   Append a JOURNAL.md entry: test, failure rate before, root cause, fix or quarantine,
+   rate after. Commit: &quot;flake({test}): {cause} — {N/50}→0/50&quot; or &quot;flake({test}): quarantined&quot;.
+   Stop.
+
+Hard rules: one flake per pass; fix the cause, never add retries or inflate timeouts to
+hide it; never delete a test to make red go away; a quarantine must carry a diagnosis and
+a status, so the debt stays visible.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Run unattended loops in a container or dedicated VM with only the project mounted; git is the undo button. <code>--permission-mode acceptEdits</code> when supervising. Reproduction can be slow (50× a test); tune <code>reruns</code> down for fast suites, up for rare flakes.</p>
+<h2>Stop condition</h2>
+<p>Every suspect is <code>fixed</code>, <code>quarantined</code>, or <code>accepted</code> → the loop writes &quot;NO OPEN FLAKES&quot;, creates STOP, and halts. Feed it new suspects from CI and clear STOP to keep hunting. The <code>quarantined</code> list is a standing to-do: the debt that a future pass or human must still pay.</p>
+<h2>Failure modes</h2>
+<ul><li><strong>Can&#x27;t reproduce locally</strong> → the <code>accepted: not reproduced</code> path; never fabricate a fix for a failure you never observed. Note the environment gap for CI-side investigation.</li><li><strong>&quot;Fix&quot; is a hidden retry</strong> → explicitly banned; retries and timeout bumps mask flakes and let them rot. Quarantine honestly instead if the real cause resists.</li><li><strong>Fixing one flake reveals another</strong> (shared-state dominoes) → one per pass keeps commits bisectable; add the newly-exposed test as a new suspect rather than chasing both at once.</li><li><strong>Quarantine becomes a graveyard</strong> → status + diagnosis keep it visible; the stop condition does not count <code>quarantined</code> as done work, only as tracked debt.</li></ul>
+<h2>Variations</h2>
+<ul><li>CI-mining mode: step 3 pulls suspects straight from the last N CI runs by green-and-red-on-same-sha detection, so the loop feeds itself.</li><li>Stress mode: raise <code>reruns</code> and run under load / parallelism to surface concurrency flakes that a quiet single-threaded rerun hides.</li></ul>
+<h2>Review log</h2>
+<p>_(reviewers append here)_</p>
+  <pre id="cmd" hidden>---
+description: Flake Hunter — reproduce and fix one flaky test per pass
+---
+You are one pass of a flake-hunting loop. Files are your only memory; assume amnesia.
+
+0. If state/flakes.json does not exist: create it as { &quot;reruns&quot;: 50, &quot;suspects&quot;: [], &quot;fixed&quot;: [], &quot;quarantined&quot;: [] }, then STOP and ask me to add suspect test ids (or grant CI access to mine them), and re-run.
+1. Read state/flakes.json and the last 30 lines of JOURNAL.md.
+2. If no suspect has status &quot;open&quot;: append &quot;NO OPEN FLAKES&quot; to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE &quot;open&quot; suspect. If the suspects list is empty but you have CI access, mine the
+   last N failed runs for one test that also has green runs on the same commit, add it as
+   a suspect, and take it.
+4. Reproduce the flake: run that single test &quot;reruns&quot; times (from state). Record the
+   observed failure rate (e.g. 7/50). If it passes 100%, it is not reproducibly flaky from
+   here — mark it &quot;accepted: not reproduced locally (Nx)&quot; with the date and move on; do not
+   guess at fixes for something you cannot see fail.
+5. Diagnose the ONE root cause from the failure output. The usual suspects: test-order or
+   shared-state coupling, real time / timezone, unseeded randomness, unawaited async or
+   fixed sleeps, network/filesystem/DB assumptions, floating-point equality. Write the
+   cause in the journal in one sentence.
+6. Fix the CAUSE, not the symptom: seed the RNG, inject a clock, await the condition
+   instead of sleeping, isolate the shared fixture, stub the boundary. Do NOT add blind
+   retries or bump timeouts to paper over it. Re-run the single test &quot;reruns&quot; times: it
+   must now pass 100%. Then run the surrounding file to confirm no collateral damage.
+   - If you genuinely cannot fix it this pass: quarantine it with the runner&#x27;s skip/exclude
+     mechanism, tagged with a link to the diagnosis, and set status &quot;quarantined&quot;. A
+     quarantine is a tracked debt, never a silent skip.
+7. Update state/flakes.json (move the suspect to fixed/quarantined, or mark accepted).
+   Append a JOURNAL.md entry: test, failure rate before, root cause, fix or quarantine,
+   rate after. Commit: &quot;flake({test}): {cause} — {N/50}→0/50&quot; or &quot;flake({test}): quarantined&quot;.
+   Stop.
+
+Hard rules: one flake per pass; fix the cause, never add retries or inflate timeouts to
+hide it; never delete a test to make red go away; a quarantine must carry a diagnosis and
+a status, so the debt stays visible.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

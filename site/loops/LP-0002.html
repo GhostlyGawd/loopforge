@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0002 Polish Pass — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0002 · Code Quality</span>
+    <span class="stamp canonical">canonical</span>
+    <span class="tier">micro</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>Polish Pass</h1>
+<p>The janitor loop. Each pass fixes exactly one small blemish — a lint warning, a dead import, a confusing name, a missing docstring — verified by tests, logged in a ledger. Cheap, safe, and endlessly repeatable.</p>
+<h2>When to reach for it</h2>
+<ul><li>A codebase that works but accumulated grime.</li><li>Overnight runs where you want strictly low-risk improvement.</li><li>Not a fit: structural refactors (use a medium/large loop with a design file).</li></ul>
+<h2>Setup</h2>
+<p>Create <code>state/polish-ledger.md</code> with two sections: <code>## Fixed</code> and <code>## Declined (and why)</code>. Ensure the linter and test suite run clean-ish; note the baseline in the ledger.</p>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/polish-pass.md</code>. Run one pass with <code>/polish-pass</code>, or loop it with <code>/loop /polish-pass</code> (default 10m interval). Self-initializes on first run.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: Polish Pass — fix one small blemish per pass, verified by tests
+---
+Files are your only memory; assume amnesia.
+
+0. If `state/polish-ledger.md` does not exist, create it with two sections, `## Fixed` and
+   `## Declined (and why)`, and note the linter/test baseline.
+1. Read state/polish-ledger.md and the last 20 lines of JOURNAL.md.
+2. Find ONE small blemish not already in the ledger: a lint warning, dead code, an unclear
+   name, a missing docstring on a public function, a magic number, inconsistent formatting.
+   Prefer the highest-confidence, lowest-blast-radius fix.
+3. If a full skim finds nothing above the &quot;worth fixing&quot; bar, append &quot;SWEEP CLEAN&quot; to the
+   ledger, create a STOP file, commit, and exit.
+4. Fix it. Behavior must not change: run the tests; any red means revert.
+5. Log it under ## Fixed (file, what, why). If you considered and rejected a fix, log it under
+   ## Declined so future passes skip it.
+6. Append a one-line JOURNAL.md entry. Commit: &quot;polish: {what}&quot;. Stop.
+
+Hard rules: one blemish per pass; no behavior changes; no new dependencies; anything needing
+product judgment goes to ## Declined, not into code.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of a polish loop. Files are your only memory.
+
+1. Read state/polish-ledger.md and the last 20 lines of JOURNAL.md.
+2. Find ONE small blemish not already in the ledger: linter warning, dead code, unclear
+   name, missing docstring on a public function, magic number, inconsistent formatting.
+   Prefer the highest-confidence, lowest-blast-radius fix available.
+3. If a full skim of linter output and the codebase surfaces nothing above the
+   &quot;worth fixing&quot; bar, append &quot;SWEEP CLEAN&quot; to the ledger, create STOP, commit, exit.
+4. Fix it. Behavior must not change: run the test suite; any red means revert.
+5. Log it under ## Fixed (file, what, why). If you considered and rejected a fix,
+   log that under ## Declined so future passes skip it.
+6. Append a one-line JOURNAL.md entry. Commit: &quot;polish: {what}&quot;. Stop.
+
+Hard rules: one blemish per pass; no behavior changes; no new dependencies; anything
+requiring judgment about product behavior goes to ## Declined, not into code.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Container or dedicated VM for unattended runs; <code>--permission-mode acceptEdits</code> when supervising. This loop is the classic first unattended run — blast radius is tiny.</p>
+<h2>Stop condition</h2>
+<p>A pass that finds nothing worth fixing declares SWEEP CLEAN and creates STOP.</p>
+<h2>Failure modes</h2>
+<ul><li><strong>Endless bikeshedding</strong> → the ledger&#x27;s Declined section is binding; once declined, skip forever unless a human deletes the line.</li><li><strong>Sneaky behavior change</strong> → test gate + revert rule.</li><li><strong>Ledger bloat</strong> → acceptable; it is the loop&#x27;s memory and audit trail.</li></ul>
+<h2>Variations</h2>
+<ul><li>Scope to a directory: add &quot;only under src/legacy/&quot; to step 2.</li><li>Docstring-only mode, rename-only mode: constrain the blemish menu.</li></ul>
+<h2>Review log</h2>
+<ul><li>review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 4 · guardrails 5 · copy-paste 5 → avg 4.83. draft → reviewed. Canonical candidate; stop bar is judgment-based but bounded by the Declined ledger. Full pass: reviews/review-001.md.</li><li>review-003 (i18, Lens): independent canonical smoke-read; scores held, Declined-ledger pattern validated. reviewed -&gt; canonical. See reviews/review-003.md.</li></ul>
+  <pre id="cmd" hidden>---
+description: Polish Pass — fix one small blemish per pass, verified by tests
+---
+Files are your only memory; assume amnesia.
+
+0. If `state/polish-ledger.md` does not exist, create it with two sections, `## Fixed` and
+   `## Declined (and why)`, and note the linter/test baseline.
+1. Read state/polish-ledger.md and the last 20 lines of JOURNAL.md.
+2. Find ONE small blemish not already in the ledger: a lint warning, dead code, an unclear
+   name, a missing docstring on a public function, a magic number, inconsistent formatting.
+   Prefer the highest-confidence, lowest-blast-radius fix.
+3. If a full skim finds nothing above the &quot;worth fixing&quot; bar, append &quot;SWEEP CLEAN&quot; to the
+   ledger, create a STOP file, commit, and exit.
+4. Fix it. Behavior must not change: run the tests; any red means revert.
+5. Log it under ## Fixed (file, what, why). If you considered and rejected a fix, log it under
+   ## Declined so future passes skip it.
+6. Append a one-line JOURNAL.md entry. Commit: &quot;polish: {what}&quot;. Stop.
+
+Hard rules: one blemish per pass; no behavior changes; no new dependencies; anything needing
+product judgment goes to ## Declined, not into code.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

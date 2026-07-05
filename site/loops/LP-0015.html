@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP-0015 Type Tightener — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">LP-0015 · Code Quality</span>
+    <span class="stamp draft">draft</span>
+    <span class="tier">small</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  <h1>Type Tightener</h1>
+<p>Replaces one loose type per pass — an <code>any</code>, an untyped param, a too-wide union, a missing return type — with the most precise type the checker can prove, verified by a clean type check and a green test suite. Each pass shrinks the &quot;unsafe surface&quot; a little and records why any remaining looseness is intentional. Boring, safe, and endlessly repeatable, like a type-focused Polish Pass.</p>
+<h2>When to reach for it</h2>
+<ul><li>A typed codebase (TS, Python+mypy, etc.) that leaks <code>any</code>/<code>Any</code> or untyped edges.</li><li>You want steady, low-risk type coverage without a big-bang annotation sprint.</li><li>Not a fit: an untyped codebase with no checker configured (set that up first); designing a complex generic API (that&#x27;s deliberate design work, not a sweep).</li></ul>
+<h2>Setup</h2>
+<ol><li>Get the type checker running clean-ish by hand; note the command and current error/<code>any</code> count.</li><li>Seed <code>state/types-ledger.json</code>: ``<code>json { &quot;check_command&quot;: &quot;&lt;runs the type checker, reports any/errors&gt;&quot;, &quot;test_command&quot;: &quot;&lt;runs the suite&gt;&quot;, &quot;sites&quot;: [ { &quot;where&quot;: &quot;src/api.ts:42 param </code>data<code>&quot;, &quot;kind&quot;: &quot;any&quot;, &quot;status&quot;: &quot;open&quot; } ], &quot;justified&quot;: [] } </code>`<code> Seed </code>sites<code> from the checker&#x27;s </code>any<code>/implicit-any/missing-annotation report; each </code>open`.</li></ol>
+<h2>Run it</h2>
+<p><strong>One paste, then it loops itself.</strong> Save the block below as <code>.claude/commands/type-tightener.md</code>. Run one pass with <code>/type-tightener</code>, or loop it with <code>/loop /type-tightener</code> (default 10m). It self-initializes on first run.</p>
+<pre class="code"><span class="lang">markdown</span><code>---
+description: Type Tightener — replace one loose type per pass
+---
+You are one pass of a type-tightening loop. Files are your only memory; assume amnesia.
+
+0. If state/types-ledger.json does not exist: get the type checker running, then create state/types-ledger.json as { &quot;check_command&quot;: &quot;&quot;, &quot;test_command&quot;: &quot;&quot;, &quot;sites&quot;: [], &quot;justified&quot;: [] }; STOP and ask me to set the commands and seed sites from the checker&#x27;s any/implicit-any report, and re-run.
+1. Read state/types-ledger.json and the last 30 lines of JOURNAL.md.
+2. Run &quot;check_command&quot;. If it is clean and no site is &quot;open&quot;: append &quot;TYPES TIGHT&quot; to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick ONE &quot;open&quot; site — prefer the widest blast radius (exported/public signatures, then
+   shared utilities, then leaves). If the report shows a site not in the ledger, add it.
+4. Replace the loose type with the MOST PRECISE type the checker can prove — infer from
+   usage, follow the value&#x27;s real shape, introduce a named type/interface if it clarifies.
+   Do NOT use `any`, `unknown`-and-cast, or `@ts-ignore`/`# type: ignore` to &quot;win&quot;; if the
+   value is genuinely dynamic, type it honestly (`unknown` with a real narrowing guard) or
+   mark the site &quot;justified&quot; with a reason. Change types only — no behavior changes.
+5. Verify BOTH: run &quot;check_command&quot; (must have zero NEW errors and one fewer loose site) and
+   &quot;test_command&quot; (must stay green — a type change that breaks a test revealed a real bug or
+   a wrong annotation; fix the annotation, or the bug if it&#x27;s real and say so). Revert on red.
+6. Move the site to done (or &quot;justified&quot;). Append a JOURNAL.md entry: site, old→new type,
+   anything learned about the code. Commit: &quot;types({where}): {any→precise}&quot;. Stop.
+
+Hard rules: one site per pass; never suppress the checker (`any`/ignore/blind cast) to pass;
+no behavior changes; a genuinely dynamic value is typed honestly or &quot;justified&quot; with a
+reason; the test suite stays green.</code></pre>
+<p>For fully unattended runs outside an interactive session, use the shell loop in <code>## Harness</code>.</p>
+<h2>The Loop Prompt</h2>
+<pre class="code"><code>You are one pass of a type-tightening loop. Files are your only memory; assume amnesia.
+
+1. Read state/types-ledger.json and the last 30 lines of JOURNAL.md.
+2. Run &quot;check_command&quot;. If it is clean and no site is &quot;open&quot;: append &quot;TYPES TIGHT&quot; to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick ONE &quot;open&quot; site — prefer the widest blast radius (exported/public signatures, then
+   shared utilities, then leaves). If the report shows a site not in the ledger, add it.
+4. Replace the loose type with the MOST PRECISE type the checker can prove — infer from
+   usage, follow the value&#x27;s real shape, introduce a named type/interface if it clarifies.
+   Do NOT use `any`, `unknown`-and-cast, or `@ts-ignore`/`# type: ignore` to &quot;win&quot;; if the
+   value is genuinely dynamic, type it honestly (`unknown` with a real narrowing guard) or
+   mark the site &quot;justified&quot; with a reason. Change types only — no behavior changes.
+5. Verify BOTH: run &quot;check_command&quot; (must have zero NEW errors and one fewer loose site) and
+   &quot;test_command&quot; (must stay green — a type change that breaks a test revealed a real bug or
+   a wrong annotation; fix the annotation, or the bug if it&#x27;s real and say so). Revert on red.
+6. Move the site to done (or &quot;justified&quot;). Append a JOURNAL.md entry: site, old→new type,
+   anything learned about the code. Commit: &quot;types({where}): {any→precise}&quot;. Stop.
+
+Hard rules: one site per pass; never suppress the checker (`any`/ignore/blind cast) to pass;
+no behavior changes; a genuinely dynamic value is typed honestly or &quot;justified&quot; with a
+reason; the test suite stays green.</code></pre>
+<h2>Harness</h2>
+<pre class="code"><span class="lang">bash</span><code>while :; do
+  [ -f STOP ] &amp;&amp; break
+  claude -p &quot;$(cat PROMPT.md)&quot; --dangerously-skip-permissions
+  sleep 2
+done</code></pre>
+<p>Run unattended loops in a container or dedicated VM with only the project mounted; git is the undo button. <code>--permission-mode acceptEdits</code> when supervising. Tiny blast radius — a good early unattended loop, like Polish Pass for types.</p>
+<h2>Stop condition</h2>
+<p>Checker clean and every site <code>done</code>/<code>justified</code> → the loop writes &quot;TYPES TIGHT&quot;, creates STOP, halts. Tighten the checker config (enable <code>strict</code>, ban implicit any) and re-seed to climb further.</p>
+<h2>Failure modes</h2>
+<ul><li><strong>Suppression masquerading as a fix</strong> (<code>any</code>, <code>@ts-ignore</code>, blind casts) → explicitly banned; the only non-fix path is &quot;justified&quot; with a written reason.</li><li><strong>A &quot;type fix&quot; that changes behavior</strong> → types-only rule + the test gate; any red reverts.</li><li><strong>Over-narrowing</strong> (a type too tight for real inputs) → verify against real call sites; if callers legitimately pass more shapes, the honest type is the wider one, not a lie.</li><li><strong>Endless justified list</strong> → acceptable and intended; it is the audit trail of deliberate dynamic edges, and the stop condition counts them as resolved.</li></ul>
+<h2>Variations</h2>
+<ul><li>Strictness-ratchet mode: each &quot;clean&quot; milestone enables one stricter compiler flag and re-seeds, so the type floor only ever rises.</li><li>Public-API-only mode: constrain <code>sites</code> to exported signatures for a high-value first pass.</li></ul>
+<h2>Review log</h2>
+<p>_(reviewers append here)_</p>
+  <pre id="cmd" hidden>---
+description: Type Tightener — replace one loose type per pass
+---
+You are one pass of a type-tightening loop. Files are your only memory; assume amnesia.
+
+0. If state/types-ledger.json does not exist: get the type checker running, then create state/types-ledger.json as { &quot;check_command&quot;: &quot;&quot;, &quot;test_command&quot;: &quot;&quot;, &quot;sites&quot;: [], &quot;justified&quot;: [] }; STOP and ask me to set the commands and seed sites from the checker&#x27;s any/implicit-any report, and re-run.
+1. Read state/types-ledger.json and the last 30 lines of JOURNAL.md.
+2. Run &quot;check_command&quot;. If it is clean and no site is &quot;open&quot;: append &quot;TYPES TIGHT&quot; to
+   JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick ONE &quot;open&quot; site — prefer the widest blast radius (exported/public signatures, then
+   shared utilities, then leaves). If the report shows a site not in the ledger, add it.
+4. Replace the loose type with the MOST PRECISE type the checker can prove — infer from
+   usage, follow the value&#x27;s real shape, introduce a named type/interface if it clarifies.
+   Do NOT use `any`, `unknown`-and-cast, or `@ts-ignore`/`# type: ignore` to &quot;win&quot;; if the
+   value is genuinely dynamic, type it honestly (`unknown` with a real narrowing guard) or
+   mark the site &quot;justified&quot; with a reason. Change types only — no behavior changes.
+5. Verify BOTH: run &quot;check_command&quot; (must have zero NEW errors and one fewer loose site) and
+   &quot;test_command&quot; (must stay green — a type change that breaks a test revealed a real bug or
+   a wrong annotation; fix the annotation, or the bug if it&#x27;s real and say so). Revert on red.
+6. Move the site to done (or &quot;justified&quot;). Append a JOURNAL.md entry: site, old→new type,
+   anything learned about the code. Commit: &quot;types({where}): {any→precise}&quot;. Stop.
+
+Hard rules: one site per pass; never suppress the checker (`any`/ignore/blind cast) to pass;
+no behavior changes; a genuinely dynamic value is typed honestly or &quot;justified&quot; with a
+reason; the test suite stays green.</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>

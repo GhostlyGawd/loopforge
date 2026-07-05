@@ -66,9 +66,178 @@ def collect():
         meta, body = parse_front_matter(path.read_text())
         meta["purpose"] = first_paragraph(body)
         meta["command"] = run_command(body)
+        meta["body"] = body          # full markdown, rendered onto the per-loop detail page
         meta["path"] = str(path.relative_to(ROOT))
         entries.append(meta)
     return entries
+
+
+def _inline(text):
+    """Inline markdown → HTML: escape, then code / bold / links."""
+    t = html.escape(text)
+    t = re.sub(r"`([^`]+)`", r"<code>\1</code>", t)
+    t = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", t)
+    t = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<a href="\2">\1</a>', t)
+    return t
+
+
+def render_markdown(md):
+    """Minimal, dependency-free markdown → HTML for the loop-entry bodies: headings,
+    paragraphs, bullet/numbered lists, fenced code blocks, blockquotes, and inline spans.
+    Stdlib only, on purpose (matches the tooling ethos)."""
+    out, para, items, list_tag = [], [], [], None
+    in_code, code, lang = False, [], ""
+
+    def flush_para():
+        if para:
+            out.append("<p>" + _inline(" ".join(para)) + "</p>")
+            para.clear()
+
+    def flush_list():
+        nonlocal list_tag
+        if list_tag:
+            out.append(
+                "<" + list_tag + ">"
+                + "".join("<li>" + _inline(x) + "</li>" for x in items)
+                + "</" + list_tag + ">"
+            )
+            items.clear()
+            list_tag = None
+
+    for line in md.split("\n"):
+        if line.startswith("```"):
+            if not in_code:
+                flush_para(); flush_list()
+                in_code, code, lang = True, [], line[3:].strip()
+            else:
+                in_code = False
+                label = f'<span class="lang">{html.escape(lang)}</span>' if lang else ""
+                out.append(
+                    '<pre class="code">' + label
+                    + "<code>" + html.escape("\n".join(code)) + "</code></pre>"
+                )
+            continue
+        if in_code:
+            code.append(line); continue
+        s = line.strip()
+        if not s:
+            flush_para(); flush_list(); continue
+        m = re.match(r"^(#{1,4})\s+(.*)$", s)
+        if m:
+            flush_para(); flush_list()
+            lvl = len(m.group(1))
+            out.append(f"<h{lvl}>{_inline(m.group(2))}</h{lvl}>"); continue
+        if re.match(r"^[-*]\s+", s):
+            flush_para()
+            if list_tag != "ul":
+                flush_list(); list_tag = "ul"
+            items.append(re.sub(r"^[-*]\s+", "", s)); continue
+        if re.match(r"^\d+\.\s+", s):
+            flush_para()
+            if list_tag != "ol":
+                flush_list(); list_tag = "ol"
+            items.append(re.sub(r"^\d+\.\s+", "", s)); continue
+        if s.startswith(">"):
+            flush_para(); flush_list()
+            out.append("<blockquote>" + _inline(s.lstrip("> ").strip()) + "</blockquote>"); continue
+        if list_tag and (line.startswith("  ") or line.startswith("\t")):
+            items[-1] += " " + s; continue
+        para.append(s)
+    flush_para(); flush_list()
+    return "\n".join(out)
+
+
+DETAIL_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@@ID@@ @@TITLE@@ — Weft</title>
+<style>
+  :root{--warp:#0E1726; --cloth:#16233A; --line:#5B7186; --ink:#C9D6E5;
+    --dim:#7E93A8; --mark:#E8C468; --flash:#6FB2A8;}
+  *{box-sizing:border-box; margin:0}
+  body{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    background:var(--warp); color:var(--ink); font-size:14px; line-height:1.6; padding:20px}
+  a{color:var(--flash)}
+  .sheet{max-width:820px; margin:0 auto; border:2px solid var(--line);
+    background:rgba(22,35,58,.6); padding:22px 26px 30px}
+  .back{display:inline-block; margin-bottom:14px; color:var(--dim); text-decoration:none; font-size:12px; letter-spacing:.08em}
+  .back:hover{color:var(--ink)}
+  .metabar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:6px}
+  .metabar .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
+  .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line)}
+  .stamp.draft{border-style:dashed; color:var(--mark); border-color:var(--mark)}
+  .stamp.reviewed{color:var(--ink)}
+  .stamp.canonical{background:var(--ink); color:var(--warp); border-color:var(--ink); font-weight:700}
+  .stamp.deprecated{color:var(--dim); text-decoration:line-through}
+  .tier{font-size:11px; color:var(--ink); border:1px solid var(--dim); padding:1px 6px}
+  .copybtn{margin-left:auto; background:transparent; color:var(--mark); border:1px solid var(--mark);
+    font:inherit; font-size:12px; letter-spacing:.06em; padding:6px 12px; cursor:pointer}
+  .copybtn:hover{background:var(--mark); color:var(--warp)}
+  .weftline{color:var(--mark); font-size:12px; overflow:hidden; white-space:nowrap;
+    border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:16px}
+  h1{font-size:22px; letter-spacing:.04em; text-transform:uppercase; margin:6px 0 10px}
+  h2{font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:var(--mark);
+    margin:26px 0 8px; padding-top:14px; border-top:1px solid var(--line)}
+  h3{font-size:13px; letter-spacing:.06em; color:var(--ink); margin:16px 0 6px}
+  p{margin:8px 0; color:var(--ink)}
+  ul,ol{margin:8px 0 8px 22px} li{margin:4px 0; color:var(--ink)}
+  strong{color:var(--ink)}
+  code{background:var(--warp); border:1px solid var(--line); padding:1px 4px; font-size:12.5px; color:var(--mark)}
+  pre.code{position:relative; background:var(--warp); border:1px solid var(--line); padding:12px 14px;
+    margin:10px 0; overflow-x:auto}
+  pre.code code{background:none; border:none; padding:0; color:var(--ink); white-space:pre; font-size:12.5px}
+  pre.code .lang{position:absolute; top:0; right:0; font-size:9px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--dim); background:var(--cloth); border-left:1px solid var(--line); border-bottom:1px solid var(--line); padding:2px 6px}
+  blockquote{border-left:2px solid var(--mark); padding:2px 0 2px 12px; margin:10px 0; color:var(--dim)}
+  footer{margin-top:24px; padding-top:12px; border-top:1px solid var(--line); color:var(--dim); font-size:11px; letter-spacing:.06em}
+  :focus-visible{outline:2px solid var(--mark); outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <a class="back" href="../index.html">&larr; all loops</a>
+  <div class="metabar">
+    <span class="id">@@ID@@ · @@CAT@@</span>
+    <span class="stamp @@STATUS@@">@@STATUS@@</span>
+    <span class="tier">@@TIER@@</span>
+    <button class="copybtn" id="copy" type="button">Copy /command</button>
+  </div>
+  <div class="weftline" aria-hidden="true">&gt;-----------------------------------------------------------&gt;</div>
+  @@BODY@@
+  <pre id="cmd" hidden>@@CMD@@</pre>
+  <footer>Weft · loop-prompt library — the loop that maintains this catalog. <a href="../index.html">Back to the catalog</a>.</footer>
+</div>
+<script>
+const btn = document.getElementById('copy'), cmd = document.getElementById('cmd');
+if (cmd && cmd.textContent.trim()){
+  btn.addEventListener('click', () => navigator.clipboard.writeText(cmd.textContent).then(() => {
+    btn.textContent = 'Copied \\u2713'; setTimeout(() => { btn.textContent = 'Copy /command'; }, 1500);
+  }));
+} else { btn.style.display = 'none'; }
+</script>
+</body>
+</html>
+"""
+
+
+def build_details(entries, tax):
+    cats = {c["id"]: c["name"] for c in tax["categories"]}
+    outdir = ROOT / "site" / "loops"
+    outdir.mkdir(parents=True, exist_ok=True)
+    for e in entries:
+        page = (
+            DETAIL_TEMPLATE
+            .replace("@@ID@@", html.escape(e.get("id", "?")))
+            .replace("@@TITLE@@", html.escape(e.get("title", "?")))
+            .replace("@@CAT@@", html.escape(cats.get(e.get("category"), e.get("category", "?"))))
+            .replace("@@STATUS@@", html.escape(e.get("status", "draft")))
+            .replace("@@TIER@@", html.escape(e.get("tier", "?")))
+            .replace("@@CMD@@", html.escape(e.get("command", "")))
+            .replace("@@BODY@@", render_markdown(e.get("body", "")))
+        )
+        (outdir / f"{e['id']}.html").write_text(page)
 
 
 def build_index(entries, tax, state):
@@ -151,7 +320,9 @@ TEMPLATE = """<!DOCTYPE html>
   .chip:focus-visible, .tools input:focus-visible, a:focus-visible{outline:2px solid var(--mark); outline-offset:2px}
   /* cards */
   .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; padding:14px}
-  .card{border:1px solid var(--line); padding:12px 14px; background:var(--panel); display:flex; flex-direction:column; gap:8px}
+  .card{border:1px solid var(--line); padding:12px 14px; background:var(--panel); display:flex; flex-direction:column; gap:8px; cursor:pointer}
+  .card h2 a{color:inherit; text-decoration:none}
+  .card:hover h2 a{color:var(--mark)}
   .card .top{display:flex; justify-content:space-between; gap:8px; align-items:baseline}
   .card .id{color:var(--dim); font-size:12px; letter-spacing:.14em}
   .stamp{font-size:10px; letter-spacing:.16em; text-transform:uppercase; padding:2px 7px; border:1px solid var(--line); white-space:nowrap}
@@ -215,7 +386,7 @@ function card(e){
   el.innerHTML =
     '<div class="top"><span class="id">' + e.id + ' / ' + (CATS[e.category]||e.category) + '</span>' +
     '<span class="stamp ' + e.status + '">' + e.status + '</span></div>' +
-    '<h2>' + e.title + '</h2>' +
+    '<h2><a href="loops/' + e.id + '.html">' + e.title + '</a></h2>' +
     '<p>' + e.purpose + '</p>' +
     '<p class="stopline"><b>STOPS WHEN</b> ' + e.stop_when + '</p>' +
     '<div class="meta"><span class="tier">' + e.tier + '</span>' +
@@ -233,6 +404,10 @@ function card(e){
     });
     el.appendChild(b);
   }
+  el.addEventListener('click', ev => {
+    if (ev.target.closest('.copybtn') || ev.target.closest('a')) return;
+    location.href = 'loops/' + e.id + '.html';
+  });
   return el;
 }
 function render(){
@@ -312,7 +487,8 @@ def main():
     entries = collect()
     build_index(entries, tax, state)
     build_site(entries, tax, state)
-    print(f"BUILD: OK — INDEX.md + site/index.html ({len(entries)} entries)")
+    build_details(entries, tax)
+    print(f"BUILD: OK — INDEX.md + site/index.html + site/loops/ ({len(entries)} entries)")
 
 
 if __name__ == "__main__":
