@@ -316,3 +316,18 @@ Entry template (copy exactly; newest at the bottom):
   ideas remain unbuilt (security-walker, readme-gardener). Pipeline is healthy again: 5 open
   ideas across data/code-quality/testing/docs.
 
+## i20 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder), last of this batch. Wrote LP-0014 Migration Runner
+  (data · medium) — one ordered schema/data migration per pass, each with a tested up AND
+  down (reversibility proven by actually rolling back and re-applying), verified by an intent
+  query, pinned to a disposable DB, applied migrations immutable. Chose this over readme-
+  gardener, which would near-duplicate LP-0004 Docs Gardener's README mode (curated, not hoarded).
+- files: library/loops/data/LP-0014-migration-runner.md (new), state/STATE.json (i->20, queue
+  popped to [auditor]), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is auditor — time for audit-002 (14 loops in; check health,
+  role balance, and the open ADR-005/timestamp proposals), then the queue refills.
+- notes: Library at 14 loops. data shelf now 2 (Data Janitor + Migration Runner), a clean
+  "trust your data / evolve your schema" pair. Related to LP-0007. Batch of 5 (i16-i20) done;
+  checkpoint next. Consciously declined readme-gardener to avoid a near-duplicate.
+
