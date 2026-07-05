@@ -272,3 +272,18 @@ Entry template (copy exactly; newest at the bottom):
   "per-loop detail pages" by giving it the required prior-iteration ADR. Raising real
   copy-paste truth (readers get the prompt itself) is the point of the detail pages.
 
+## i17 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0013 Benchmark Optimizer (code-quality · large)
+  — profile-first performance loop: one measured hotspot per pass, single smallest change,
+  correctness suite is a hard gate, a change below threshold is reverted, and every kept win
+  ships a perf regression test so it can't silently rot. The library's first `large`
+  code-quality entry.
+- files: library/loops/code-quality/LP-0013-benchmark-optimizer.md (new), state/STATE.json
+  (i->17, queue popped), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is reviewer — take the next canonical smoke-read (LP-0002
+  Polish Pass, per the audit-001 cadence).
+- notes: Related to LP-0003 (Coverage Climber): both are measure-first loops guarded by tests
+  — one guards behavior, the other guards speed. code-quality is now the deepest shelf (4).
+  Library at 13 loops. "Report numbers, never vibes" is the guardrail that keeps it honest.
+
