@@ -4,8 +4,10 @@ name: Deploy site to GitHub Pages
 # The site is regenerated from the library by tools/build.py so what ships
 # always matches the committed loops. Runs on pushes to the default branch.
 #
-# One-time setup by a repo admin: Settings → Pages → Build and deployment →
-# Source = "GitHub Actions". After that, every push to main redeploys.
+# No manual setup needed: the `actions/configure-pages` step below enables
+# GitHub Pages (build type "workflow") automatically on first run via the API,
+# so the site goes live without anyone flipping a repo setting. After that,
+# every push to main regenerates and redeploys.
 
 on:
   push:
@@ -27,6 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Enable + configure Pages (auto-enables on first run)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
