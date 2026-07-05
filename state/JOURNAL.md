@@ -371,3 +371,17 @@ Entry template (copy exactly; newest at the bottom):
   the agreement. testing shelf now 3 (Coverage Climber, Flake Hunter, Contract Tester).
   Library at 16 loops.
 
+## i24 — librarian — 2026-07-05T00:00:00Z
+- did: Grow pass (popped librarian). Resolved the SCHEMA §4 vs LP-0005 contradiction open since
+  audit-001: amended SCHEMA §4 with a narrow reference-implementation exemption (a loop whose
+  prompt IS a live file in this repo may point at it rather than duplicate it) and recorded the
+  reasoning as ADR-006. No validate.py change needed; SCHEMA.md is outside the two-iteration rule.
+- files: library/SCHEMA.md (§4 exemption), state/DECISIONS.md (ADR-006), state/STATE.json
+  (i->24), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder. Also: a reviewer can now revisit LP-0005's copy-paste
+  score on the merits (ADR-006), and the timestamp-honesty proposal is still open.
+- notes: Kept the exemption deliberately narrow — "prompt lives in THIS repo" — so it can't
+  become a loophole for lazy external-link entries. Validator and rubric now agree; one of the
+  two long-open audit findings is closed. Timestamp honesty remains the last open one.
+

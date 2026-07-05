@@ -30,6 +30,12 @@ updated: 2026-07-04
 3. `## Setup` — what to create before the first pass (state files, config, spec).
 4. `## The Loop Prompt` — ONE fenced block containing the complete prompt, written to
    the QUALITY.md bar. This block is the product; everything else is packaging.
+   **Reference-implementation exemption (ADR-006):** a loop whose prompt *is* a live file
+   in this repository (e.g. a meta loop pointing at `LOOP.md`) may, instead of duplicating
+   it, put a faithful summary of the prompt's shape in the fence plus an explicit pointer to
+   the canonical file — so the running system and its library entry can never drift apart.
+   This is the ONLY case where the fence may be a pointer rather than the full prompt; every
+   other loop inlines a complete, paste-and-run prompt.
 5. `## Harness` — the exact shell to run it (see house harness pattern below).
 6. `## Stop condition` — how the loop knows it's done and what it does then.
 7. `## Failure modes` — the 2–4 most likely ways it goes wrong, and the prompt's
