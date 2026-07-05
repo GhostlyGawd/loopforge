@@ -414,3 +414,18 @@ Entry template (copy exactly; newest at the bottom):
 - notes: Corrects an earlier wrong assumption (mine, in chat) that looping needs a shell
   harness — Claude Code's built-in `/loop` re-runs a command on an interval and continues
   itself. That is exactly what makes the one-paste command form viable.
+
+## i27 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder) on the P0. P0b: documented the `## Run it` section in
+  SCHEMA.md (rolling out per ADR-007, un-enforced until all entries carry it) and converted
+  the two canonical loops as exemplars — LP-0002 Polish Pass and LP-0003 Coverage Climber now
+  carry a self-initializing `.claude/commands/<slug>.md` block run continuously via
+  `/loop /<slug>`. No tool change; gate stays green.
+- files: library/SCHEMA.md (## Run it note), LP-0002 + LP-0003 (## Run it + version bump),
+  state/STATE.json (i->27), state/BACKLOG.md (P0b done), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: P0c — implement build.py "Copy command" per card (two-iteration rule
+  satisfied: ADR-007 proposed i26). Then P0d converts the remaining 15 loops, canon quality first.
+- notes: The command form makes the library deliver its own promise — copy one block, paste as
+  a command, `/loop /coverage-climber`, done. Left the shell `## Harness` intact as the
+  headless/CI path; the two are complementary, not redundant.
