@@ -4,7 +4,7 @@ title: Library Grower
 category: meta
 tier: epic
 status: reviewed
-version: 0.1.1
+version: 0.1.2
 requires: [git, a charter defining quality, a schema for entries, validate/build tooling]
 stop_when: never by design — milestones advance, the loop continues (halt with STOP)
 state_files: [state/STATE.json, state/BACKLOG.md, state/JOURNAL.md, state/DECISIONS.md]
@@ -35,6 +35,27 @@ Stand up the four pillars before the first pass:
 4. **Gates** — a validator and an index/site builder that must pass before any commit.
 
 (Cloning this repository and gutting `library/loops/` is a legitimate setup.)
+
+## Run it
+
+**One paste, then it loops itself.** This loop's prompt *is* this repository's `LOOP.md`
+(ADR-006), so the command runs one iteration of that protocol. Save the block below as
+`.claude/commands/library-grower.md`. Run one pass with `/library-grower`, or loop it with
+`/loop /library-grower` (default 10m). Point it at a repo that already has the four pillars
+(charter, schema, state/, gates) — cloning this repository and gutting `library/loops/` is a
+legitimate start.
+
+```markdown
+---
+description: Library Grower — run one iteration of the repo's LOOP.md protocol
+---
+Read LOOP.md at the repository root and execute exactly one full iteration of the protocol —
+orient, claim, one task, validate (validator + builder must pass), record (backlog, journal,
+ADR if structural), commit once — then stop and report the one-line summary. You have no memory
+of previous passes; the files are your memory. Honor a STOP file at the repo root.
+```
+
+For the full unattended harness, use `./loop.sh N` (or the shell loop in `## Harness`).
 
 ## The Loop Prompt
 

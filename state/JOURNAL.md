@@ -445,3 +445,19 @@ Entry template (copy exactly; newest at the bottom):
 - notes: Command is passed RAW (not html-escaped) because it is copied verbatim to the
   clipboard, never rendered as innerHTML. LP-0002/LP-0003 now show the button; the other 15
   show none until converted — a visible, honest progress bar of the rollout.
+
+## i29 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). P0d — converted the remaining 15 loops to the `## Run it`
+  command form, completing the P0. Each `## Run it` reuses that loop's own vetted prompt with a
+  self-initializing step 0 (creates its state file from an inline template, then stops for
+  config) and the `/loop /<slug>` run note; LP-0005 (the meta reference impl) points its command
+  at the repo's LOOP.md per ADR-006. All 17 loops now render a Copy /command button.
+- files: 15 library entries (## Run it + version bump), state/STATE.json (i->29), state/BACKLOG.md
+  (P0 + P0d done), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Reviewer re-scores copy-paste-truth now that every loop is one-paste
+  runnable (review-004 promised it) — several drafts should clear draft→reviewed, lifting the
+  quality ratio and clearing the audit-002 P1.
+- notes: Built the conversions by reusing each loop's existing prompt rather than rewriting —
+  faithful and consistent. The shell `## Harness` stays as the headless/CI path. P0 complete:
+  the library finally delivers "copy it, run it" in a single paste.

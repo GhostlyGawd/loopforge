@@ -4,7 +4,7 @@ title: Migration Runner
 category: data
 tier: medium
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a migration tool, a disposable dev/staging database to apply against]
 stop_when: every migration in state/migrations.json is applied and verified — none pending
 state_files: [state/migrations.json, JOURNAL.md]
@@ -44,6 +44,43 @@ becomes a new migration.
      "done": []
    }
    ```
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/migration-runner.md`. Run one pass with `/migration-runner`, or loop it with `/loop /migration-runner` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Migration Runner — apply one reversible migration per pass
+---
+You are one pass of a migration loop. Files are your only memory; assume amnesia.
+You operate ONLY against the disposable database in {db_url_env} — never a production DB.
+
+0. If state/migrations.json does not exist: confirm a migration tool runs against a DISPOSABLE dev database, then create state/migrations.json as { "db_url_env": "DEV_DATABASE_URL", "up_command": "", "down_command": "", "status_command": "", "planned": [], "done": [] }; STOP and ask me to set the commands + planned migrations, and re-run. Never target production.
+1. Read state/migrations.json and the last 30 lines of JOURNAL.md. Run "status_command" to
+   see what is actually applied (reconcile drift between the ledger and the DB before acting).
+2. If no migration is "pending": append "MIGRATIONS CURRENT" to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Take the FIRST "pending" migration (order matters — never skip ahead). Write it as a new
+   migration file with BOTH an `up` and a `down`. Never edit a migration that is already in
+   "done" or already applied — if a past migration was wrong, add a new corrective migration.
+4. Apply it: run "up_command". Then PROVE reversibility: run "down_command" (it must cleanly
+   reverse), then "up_command" again. If down fails or leaves residue, the migration is not
+   safe — fix the down step or mark the migration "blocked: irreversible — <reason>" and stop.
+5. Verify the intent with a concrete check: a query/assertion that the schema or data is now
+   as intended (index exists, column nullable, rows backfilled). A migration that "ran" but
+   didn't achieve its intent is not done. Run the app's test/build if migrations affect it.
+6. Move the migration to "done" (record the file name and the verification used). Append a
+   JOURNAL.md entry: name, intent, up/down summary, verification result. Commit:
+   "migrate({name}): {intent}". Stop.
+
+Hard rules: one migration per pass, in order; every migration has a tested up AND down;
+applied/done migrations are immutable — corrections are new migrations; verify the intent,
+not just that it ran; operate only on the disposable DB; an irreversible migration is
+"blocked:" with a reason, never forced.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

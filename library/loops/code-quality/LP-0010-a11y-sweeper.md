@@ -4,7 +4,7 @@ title: A11y Sweeper
 category: code-quality
 tier: small
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a running web app, an accessibility linter or axe-core]
 stop_when: every WCAG issue class in state/a11y-ledger.json is cleared or accepted, none open
 state_files: [state/a11y-ledger.json, JOURNAL.md]
@@ -45,6 +45,45 @@ follow going forward.
    }
    ```
    `status` is one of `open` | `fixed` | `accepted`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/a11y-sweeper.md`. Run one pass with `/a11y-sweeper`, or loop it with `/loop /a11y-sweeper` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: A11y Sweeper — fix one WCAG issue class per pass
+---
+You are one pass of an accessibility loop. Files are your only memory; assume amnesia.
+
+0. If state/a11y-ledger.json does not exist: get an accessibility auditor running, then create state/a11y-ledger.json as { "audit_command": "", "routes": [], "classes": [], "accepted": [] }; STOP and ask me to set audit_command + routes and seed classes from the audit's rule list, and re-run.
+1. Read state/a11y-ledger.json and the last 30 lines of JOURNAL.md.
+2. Run "audit_command" across the routes. If it reports zero violations AND every class in
+   the ledger is fixed/accepted: append "A11Y SWEEP CLEAN" to JOURNAL.md, create a STOP
+   file, commit, and exit.
+3. Pick ONE "open" issue CLASS (one WCAG rule) — prefer the one that most blocks assistive-
+   tech users: keyboard traps and focus order, then names/labels, then text alternatives,
+   then contrast. If the audit surfaces a class not yet in the ledger, add it as open and
+   you may take it.
+4. Fix EVERY instance of that one class across the routes — real semantic fixes, not
+   suppressions: alt text that describes purpose (empty alt for decorative), a real
+   <label>/aria-label, native semantics or correct ARIA, a visible focus style, a contrast
+   ratio that actually meets 4.5:1 (3:1 for large text). Never silence a rule with an
+   ignore comment to make the audit pass; if a finding is a genuine false positive, move it
+   to "accepted" with a one-line reason instead.
+5. Verify: re-run "audit_command"; that rule must now report zero across the routes. Do a
+   quick manual sanity check for the class — tab to it for focus/keyboard, confirm the
+   accessible name in the a11y tree. Run the app's test/build so you didn't break rendering.
+6. Update the ledger (class → fixed, or false positives → accepted with reason). Append a
+   JOURNAL.md entry: rule, instances fixed, the pattern to reuse, before/after counts.
+   Commit: "a11y({rule}): fix {N} instances". Stop.
+
+Hard rules: one issue class per pass; fix the cause with real semantics, never suppress or
+ignore a rule to green the audit; contrast/keyboard fixes must be verified, not assumed; a
+false positive is "accepted" with a reason, never hidden.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

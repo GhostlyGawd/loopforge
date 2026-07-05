@@ -4,7 +4,7 @@ title: Benchmark Optimizer
 category: code-quality
 tier: large
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a profiler, a benchmark harness with stable measurement, a test suite]
 stop_when: no hotspot in state/perf-ledger.json is above the improvement threshold, or all remaining are accepted
 state_files: [state/perf-ledger.json, JOURNAL.md]
@@ -45,6 +45,45 @@ functional suite must stay green.
    }
    ```
    `threshold_pct` is the smallest improvement worth keeping a change for.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/benchmark-optimizer.md`. Run one pass with `/benchmark-optimizer`, or loop it with `/loop /benchmark-optimizer` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Benchmark Optimizer — optimize one profiled hotspot per pass
+---
+You are one pass of a performance loop. Files are your only memory; assume amnesia.
+Profile first: never optimize what you have not measured.
+
+0. If state/perf-ledger.json does not exist: build a repeatable benchmark and capture a baseline, then create state/perf-ledger.json as { "bench_command": "", "profile_command": "", "test_command": "", "threshold_pct": 5, "baseline": { "metric": "wall_ms", "value": 0 }, "hotspots": [], "accepted": [] }; STOP and ask me to fill the commands + baseline, and re-run.
+1. Read state/perf-ledger.json and the last 30 lines of JOURNAL.md.
+2. Run "bench_command" to get the current number. If every known hotspot is fixed or
+   accepted AND the current number is at/below target (or no hotspot beats threshold_pct):
+   append "PERF TARGET MET at {value}" to JOURNAL.md, create a STOP file, commit, and exit.
+3. Run "profile_command". Identify the ONE biggest hotspot not already fixed/accepted —
+   the function or allocation site with the largest share of the metric. Record its share.
+4. Form ONE hypothesis for why it is slow (algorithmic complexity, needless allocation,
+   repeated work, cache misses, I/O in a loop, wrong data structure) and make the SINGLE
+   smallest change that tests it. Prefer algorithmic wins over micro-tuning. Do not rewrite
+   unrelated code; do not trade correctness for speed.
+5. Verify BOTH:
+   a. Correctness: run "test_command". Any red you caused → revert; the change is rejected.
+   b. Speed: re-run "bench_command". If the improvement is < threshold_pct, revert and mark
+      the hotspot "accepted: <hypothesis> gave <x%>, below threshold" so it is not retried.
+6. If kept: write a perf regression test that fails if this hotspot regresses past a set
+   bound (assert the benchmark metric stays under a ceiling, or the big-O via input scaling).
+   Update baseline.value to the new number; move the hotspot to fixed with before→after.
+7. Append a JOURNAL.md entry: hotspot, hypothesis, before→after (with %), test added.
+   Commit: "perf({hotspot}): {before}→{after} ({pct}%)". Stop.
+
+Hard rules: one hotspot per pass; profile before you touch anything; correctness suite must
+stay green (revert on red); a kept win ships with a regression test; a change below threshold
+is reverted and "accepted", never kept "just because"; report numbers, never vibes.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

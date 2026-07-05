@@ -4,7 +4,7 @@ title: Changelog Scribe
 category: docs
 tier: micro
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a CHANGELOG.md following Keep a Changelog (or permission to create one)]
 stop_when: the cursor in state/changelog-state.json has reached HEAD — no unwritten history remains
 state_files: [state/changelog-state.json, JOURNAL.md]
@@ -40,6 +40,45 @@ the same range is never written twice.
    }
    ```
    `cursor` advances toward HEAD as ranges are written; `tag_pattern` identifies releases.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/changelog-scribe.md`. Run one pass with `/changelog-scribe`, or loop it with `/loop /changelog-scribe` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Changelog Scribe — reconstruct the CHANGELOG one release range per pass
+---
+You are one pass of a changelog loop. Files are your only memory; assume amnesia.
+
+0. If state/changelog-state.json does not exist: ensure CHANGELOG.md has a "## [Unreleased]" skeleton, then create state/changelog-state.json as { "cursor": "<oldest sha or repo root>", "tag_pattern": "v*", "written_ranges": [] }; STOP and confirm the cursor, and re-run.
+1. Read state/changelog-state.json, the last 20 lines of JOURNAL.md, and the top of
+   CHANGELOG.md.
+2. Determine the next unwritten range. List tags matching tag_pattern in commit order.
+   The next range is (cursor .. next-tag-after-cursor]; if no tag lies ahead of the
+   cursor, the range is (cursor .. HEAD] and its entries go under "## [Unreleased]".
+3. If cursor already equals HEAD and there are no new commits: append "CHANGELOG CURRENT"
+   to JOURNAL.md, create a STOP file, commit, and exit.
+4. Read the commits in that ONE range (git log with bodies). Group changes into Keep a
+   Changelog buckets — Added / Changed / Deprecated / Removed / Fixed / Security — and
+   write each as a human-facing line: what changed and why it matters to a user, not the
+   raw commit subject. Collapse noise (merge commits, "fix typo", "wip") rather than
+   transcribing it. Link issues/PRs if the messages reference them.
+5. Insert the section in the right place: a tagged range becomes "## [x.y.z] - <date>"
+   (use the tag's own commit date, never today's date for a past release) placed above
+   older releases; an untagged range fills "## [Unreleased]". Never rewrite or reorder
+   existing released sections — only add.
+6. Advance cursor to the end of the range; append the range to written_ranges.
+7. Append a JOURNAL.md entry: range covered, version/section, commit count summarized.
+   Commit: "changelog: {version or 'unreleased'} ({N} commits)". Stop.
+
+Hard rules: one range per pass; never fabricate a change you cannot trace to a commit;
+never edit an already-published released section (append-only below Unreleased); past
+releases are dated by their tag, not by the day you wrote them; commit noise is summarized,
+not transcribed.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

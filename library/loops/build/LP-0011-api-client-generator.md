@@ -4,7 +4,7 @@ title: API Client Generator
 category: build
 tier: medium
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, an OpenAPI/schema spec, the target language toolchain with a test runner]
 stop_when: every endpoint in state/api-client.json is implemented and tested — none pending
 state_files: [state/api-client.json, JOURNAL.md]
@@ -42,6 +42,43 @@ diff-able, and a spec change touches exactly the endpoints that moved.
    }
    ```
    Populate `endpoints` from the spec's operations; each starts `pending`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/api-client-generator.md`. Run one pass with `/api-client-generator`, or loop it with `/loop /api-client-generator` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: API Client Generator — add one typed, tested endpoint per pass
+---
+You are one pass of an API-client loop. Files are your only memory; assume amnesia.
+
+0. If state/api-client.json does not exist: put the spec at spec/openapi.yaml, stand up a typed HTTP core, and create state/api-client.json as { "spec": "spec/openapi.yaml", "test_command": "", "endpoints": [] }; STOP and ask me to set test_command and populate endpoints from the spec, and re-run.
+1. Read state/api-client.json and the last 30 lines of JOURNAL.md.
+2. If no endpoint is "pending": run the full test suite once more; if green, append
+   "CLIENT COMPLETE — all endpoints implemented" to JOURNAL.md, create a STOP file,
+   commit, and exit.
+3. Pick ONE "pending" endpoint — prefer the ones others depend on (auth, then reads that
+   later writes will need), and simple shapes before deeply-nested ones.
+4. Read that operation in the spec: path, method, params (path/query/header/body), request
+   and response schemas, error responses. Implement ONE typed client method for it:
+   accurate parameter and return types generated from the schema (not `any`), the correct
+   HTTP call through the shared core, and typed error handling for the documented failures.
+   Follow the existing client's conventions exactly; do not restructure the core this pass.
+5. Write a focused test: it asserts the method builds the right request (path, query, body)
+   and decodes a spec-shaped response into the right type — mock the transport so the test
+   is deterministic and needs no live server. One happy path + one documented error.
+6. Run "test_command". Red because of your work → fix it; if the spec itself is ambiguous
+   or contradictory, do NOT guess — mark the endpoint "blocked: <question>" and pick another.
+7. Mark the endpoint "done" in state. Append a JOURNAL.md entry: op, types added, anything
+   the spec left unclear. Commit: "client({op}): typed {method} {path}". Stop.
+
+Hard rules: one endpoint per pass; types come from the schema, never `any` to move on;
+every method ships with a test; never invent behavior the spec doesn't state — a spec gap
+is "blocked:" with the question, not a guess; don't refactor the shared core mid-endpoint.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

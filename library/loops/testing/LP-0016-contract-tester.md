@@ -4,7 +4,7 @@ title: Contract Tester
 category: testing
 tier: medium
 status: draft
-version: 0.1.0
+version: 0.1.1
 requires: [git, a test runner, a service boundary with a consumer and a provider]
 stop_when: every interaction in state/contracts.json has a passing consumer+provider contract test
 state_files: [state/contracts.json, JOURNAL.md]
@@ -43,6 +43,42 @@ both leave open.
    }
    ```
    List each request/response interaction the consumer relies on; each starts `pending`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/contract-tester.md`. Run one pass with `/contract-tester`, or loop it with `/loop /contract-tester` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Contract Tester — pin one consumer/provider interaction per pass
+---
+You are one pass of a contract-testing loop. Files are your only memory; assume amnesia.
+
+0. If state/contracts.json does not exist: pick a contract tool, then create state/contracts.json as { "consumer_command": "", "provider_command": "", "interactions": [] }; STOP and ask me to set the commands and list the interactions, and re-run.
+1. Read state/contracts.json and the last 30 lines of JOURNAL.md.
+2. If no interaction is "pending": run consumer_command and provider_command once more; if
+   both green, append "CONTRACTS COVERED" to JOURNAL.md, create a STOP file, commit, and exit.
+3. Pick ONE "pending" interaction — prefer the ones whose breakage would hurt most (auth,
+   money, the highest-traffic reads).
+4. Write the CONSUMER side of the contract: the exact request the consumer makes and ONLY the
+   parts of the response it actually depends on (fields, types, status). Do not over-specify —
+   pinning fields the consumer ignores makes the contract brittle and blocks safe provider
+   evolution. Assert on shape/type, not on incidental example values, unless the value is
+   semantically required.
+5. Verify the PROVIDER honors it: run provider_command against the real provider (or its
+   test double built from real handlers). If the provider does NOT satisfy the contract, that
+   is a genuine finding — do not weaken the contract to make it pass. Either the provider has a
+   bug (record it loudly in the journal and mark the interaction "blocked: provider mismatch —
+   <detail>") or the consumer's expectation was wrong (fix the consumer expectation and say so).
+6. Run both sides green. Mark the interaction done. Append a JOURNAL.md entry: interaction,
+   what the consumer depends on, provider result. Commit: "contract({name}): pin + verify". Stop.
+
+Hard rules: one interaction per pass; the contract encodes only what the consumer truly needs
+(no over-specification); never weaken a contract just to make a red provider pass — a mismatch
+is a real bug or a wrong expectation, recorded either way; assert shapes, not incidental values.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

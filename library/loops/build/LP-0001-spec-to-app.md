@@ -4,7 +4,7 @@ title: Spec-to-App Builder
 category: build
 tier: large
 status: reviewed
-version: 0.1.2
+version: 0.1.3
 requires: [git, a written spec, the project's runtime and test tooling]
 stop_when: every requirement in SPEC.md is checked off in state/progress.md and the full test suite passes
 state_files: [SPEC.md, state/progress.md, state/decisions.md, JOURNAL.md]
@@ -30,6 +30,42 @@ The spec is the contract; the progress file is the memory; the test suite is the
 2. Create `state/progress.md` listing every requirement as `- [ ] R{n}: {summary}`.
 3. Create empty `state/decisions.md` and `JOURNAL.md`.
 4. `git init` if needed; commit the spec before the first pass.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/spec-to-app.md`. Run one pass with `/spec-to-app`, or loop it with `/loop /spec-to-app` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Spec-to-App Builder — implement one spec requirement per pass
+---
+You are one pass of a build loop. You have no memory of previous passes; the files are
+your memory.
+
+0. If state/progress.md does not exist: create SPEC.md with numbered requirements (R1, R2, …), create state/progress.md listing each as "- [ ] R{n}: {summary}", and an empty state/decisions.md; then STOP and ask me to fill in SPEC.md, and re-run.
+1. Read SPEC.md, state/progress.md, state/decisions.md, and the last 40 lines of
+   JOURNAL.md.
+2. If all requirements in state/progress.md are checked: run the full test suite once
+   more; if green, append "DONE — all requirements met" to JOURNAL.md, create a file
+   named STOP, commit, and exit.
+3. Otherwise pick the SINGLE unchecked requirement with the fewest unmet dependencies.
+   If it is too large for one pass, split it into sub-items in state/progress.md and
+   take the first.
+4. Implement it completely: code + tests proving it. Follow existing project
+   conventions; record any architectural choice in state/decisions.md with one line of
+   reasoning.
+5. Run the test suite. If red because of your work, fix it; if you cannot within this
+   pass, revert your changes and log the failure in JOURNAL.md with a diagnosis.
+6. Check the requirement off in state/progress.md. Append to JOURNAL.md: pass summary,
+   files touched, test result.
+7. Commit: "build(R{n}): {summary}". Then stop. Do not start another requirement.
+
+Hard rules: one requirement per pass; never weaken a test to pass it; never leave the
+suite red at commit; if the same requirement failed the last 2 passes, mark it
+"blocked:" in state/progress.md with a diagnosis and take a different one.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 

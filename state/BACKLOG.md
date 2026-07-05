@@ -31,13 +31,13 @@ items added per iteration.
       → Sound. Bootstrap closed; phase → grow, role_queue refilled (ADR-004).
 
 ## Grow (worked after bootstrap)
-- [ ] **P0 (directed)** Make every loop copy-paste-runnable as a slash command — a `## Run it`
+- [x] **P0 (directed)** Make every loop copy-paste-runnable as a slash command — a `## Run it`
       block you save as `.claude/commands/<slug>.md`, self-initializing, run continuously with
       the built-in `/loop /<slug>`. Design in ADR-007. Split:
   - [x] P0a Propose the `## Run it` command-form + self-init + site copy-button (ADR-007). — i26
   - [x] P0b Add `## Run it` to library/SCHEMA.md; converted the canon (LP-0002, LP-0003). — i27
   - [x] P0c build.py renders a "Copy /command" button per converted card (ADR-007). — i28
-  - [ ] P0d Builders: convert the remaining loops to include `## Run it`, canon-first.
+  - [x] P0d Converted all remaining loops (15) to `## Run it`; 17/17 now carry a command. — i29
 - [ ] P1 Reviewer: clear the draft backlog (LP-0006…LP-0014) draft→reviewed before more
       canonical promotions — quality ratio fell to 0.36 (audit-002).
 - [x] P1 LP-0009 changelog-scribe — reconstruct/maintain CHANGELOG from git history. (micro · docs)

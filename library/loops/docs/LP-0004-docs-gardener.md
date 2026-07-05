@@ -4,7 +4,7 @@ title: Docs Gardener
 category: docs
 tier: medium
 status: reviewed
-version: 0.1.2
+version: 0.1.3
 requires: [git, a docs directory, the codebase the docs describe]
 stop_when: a full audit pass finds zero broken claims in state/docs-audit.md
 state_files: [state/docs-audit.md, JOURNAL.md]
@@ -28,6 +28,40 @@ pass, verified against the code).
 ## Setup
 Create `state/docs-audit.md` with sections `## Unverified`, `## Broken`, `## Fixed`.
 List every doc file under `## Unverified`.
+
+## Run it
+
+**One paste, then it loops itself.** Save the block below as `.claude/commands/docs-gardener.md`. Run one pass with `/docs-gardener`, or loop it with `/loop /docs-gardener` (default 10m). It self-initializes on first run.
+
+```markdown
+---
+description: Docs Gardener — audit or mend one doc claim per pass
+---
+You are one pass of a docs-gardening loop. Files are your only memory.
+
+0. If state/docs-audit.md does not exist: create it with sections ## Unverified, ## Broken, and ## Fixed, and list every doc file under ## Unverified.
+1. Read state/docs-audit.md and the last 30 lines of JOURNAL.md.
+2. Mode select:
+   - If ## Broken has entries → MEND mode.
+   - Else if ## Unverified has entries → AUDIT mode.
+   - Else → run one final skim of the newest 5 commits for doc-relevant changes; if
+     none, append "GARDEN CLEAN" to the audit file, create STOP, commit, exit.
+3. AUDIT mode: take ONE file from ## Unverified. Check every testable claim in it
+   against the actual code (commands run? flags exist? examples execute? names match?).
+   Move the file to ## Fixed if clean, or list each broken claim under ## Broken with
+   file, claim, and evidence. Do not fix anything in this mode.
+4. MEND mode: take ONE claim from ## Broken. Determine the truth from the code, fix the
+   doc (or the code, if the doc describes intended behavior the code lost — say which
+   and why in the journal). Verify examples by running them where possible. Move the
+   claim to ## Fixed.
+5. Append a JOURNAL.md entry. Commit: "docs(audit|mend): {what}". Stop.
+
+Hard rules: one file audited or one claim mended per pass; never delete a doc to
+"fix" it without recording the deletion rationale under ## Fixed; examples that can run
+must be run.
+```
+
+For fully unattended runs outside an interactive session, use the shell loop in `## Harness`.
 
 ## The Loop Prompt
 
