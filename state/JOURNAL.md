@@ -357,3 +357,17 @@ Entry template (copy exactly; newest at the bottom):
 - notes: Sibling to LP-0002 Polish Pass — same janitor shape, aimed at the type layer. Draft;
   it joins the review-catch-up queue flagged in audit-002. Library at 15 loops.
 
+## i23 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0016 Contract Tester (testing · medium) — pins
+  one consumer/provider interaction per pass with a consumer-driven contract, verified against
+  the provider; over-specification and weaken-to-green both banned; a mismatch is a real
+  finding. Balances the testing shelf against the deep code-quality one.
+- files: library/loops/testing/LP-0016-contract-tester.md (new), state/STATE.json (i->23),
+  state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is librarian — good moment to write the ADR reconciling SCHEMA
+  §4 with LP-0005's by-reference prompt (open since audit-001).
+- notes: Related to LP-0011 API Client Generator — client consumes an API, contract test pins
+  the agreement. testing shelf now 3 (Coverage Climber, Flake Hunter, Contract Tester).
+  Library at 16 loops.
+
