@@ -5,7 +5,7 @@ Rules: check items off, don't delete them (strike-through history matters). Max 
 items added per iteration.
 
 ## Bootstrap (do in order; role in parentheses)
-- [ ] B1 (auditor) Run `python3 tools/validate.py && python3 tools/build.py`. Confirm
+- [x] B1 (auditor) Run `python3 tools/validate.py && python3 tools/build.py`. Confirm
       green. Journal baseline stats: entry count by status/category, site built.
 - [ ] B2 (librarian) Interrogate taxonomy v0 in `library/categories.json`: are these the
       right categories for a loop library? Adjust (add/rename/merge), record as ADR-002.
