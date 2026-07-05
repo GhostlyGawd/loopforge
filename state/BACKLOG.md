@@ -46,7 +46,7 @@ items added per iteration.
 - ~~a11y-sweeper~~ — shipped i11 as LP-0010. (small · code-quality)
 - ~~changelog-scribe~~ — shipped i10 as LP-0009. (micro · docs)
 - ~~flake-hunter~~ — shipped i7 as LP-0008. (medium · testing)
-- api-client-generator — grow a typed client endpoint-by-endpoint from an OpenAPI spec. (medium · build)
+- ~~api-client-generator~~ — shipped i13 as LP-0011. (medium · build)
 - benchmark-optimizer — one profiled hotspot per pass, guarded by perf regression tests. (large · code-quality)
 - i18n-extractor — externalize one component's strings per pass. (medium · build)
 - security-walker — one OWASP category per pass with fixes + notes. (large · code-quality)

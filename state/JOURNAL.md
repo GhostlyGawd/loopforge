@@ -212,3 +212,18 @@ Entry template (copy exactly; newest at the bottom):
 - notes: Left two links deliberately one-way: LP-0005 (the meta root) -> 0002 and LP-0006 ->
   0003 are "see also" pointers that need not be mutual. All ids resolve; no orphans.
 
+## i13 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0011 API Client Generator (build · medium) —
+  grows a typed API client one endpoint per pass from an OpenAPI spec: real schema-derived
+  types (never `any`), a deterministic mocked-transport test per method, spec gaps marked
+  blocked rather than guessed. Thickens the thin `build` shelf (was 1, now 2).
+- files: library/loops/build/LP-0011-api-client-generator.md (new), state/STATE.json
+  (i->13, queue popped), state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated
+  library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: Queue head is reviewer — take the first canonical smoke-read (LP-0003,
+  per audit-001's cadence): an independent skeptical read to promote reviewed -> canonical.
+- notes: Related to LP-0001 (Spec-to-App): build the app, then generate the typed client for
+  the API it exposes or consumes. Froze-the-core rule mirrors the one-step discipline — a
+  pass adds an endpoint, it never rewrites the foundation under the other endpoints.
+
