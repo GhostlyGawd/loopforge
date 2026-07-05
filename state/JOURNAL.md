@@ -102,3 +102,19 @@ Entry template (copy exactly; newest at the bottom):
   of applying a brand this pass. The palette change to tools/build.py is deliberately NOT
   done here (two-iteration rule); it is B6's job. Bootstrap is now one item from done: B6
   (brand→site), B7 (more loops), B8 (first review), B9 (audit → open grow phase) remain.
+
+## i6 — designer — 2026-07-05T00:00:00Z
+- did: Bootstrap B6. Implemented the brand-v1 restyle proposed in ADR-003 (i5) — the two-
+  iteration rule is satisfied (proposed last pass, applied this pass). Recolored the site
+  template from the pre-brand blueprint blues to the Weft loom palette (warp/cloth grounds,
+  thread/selvage inks, weft-gold accent, teal flash for links), added the signature weft
+  line under the strap, and retired the "PRE-BRAND" footer/docstring copy.
+- files: tools/build.py (TEMPLATE palette, link color, grid tint, weft-line element + CSS,
+  footer + docstring copy), state/STATE.json (i→6), state/BACKLOG.md (B6),
+  state/JOURNAL.md, regenerated library/INDEX.md + site/index.html.
+- validation: pass
+- next-suggestion: B7 — Builder adds LP-0008 and files P1 follow-ups for LP-0009/0010.
+- notes: Kept the genesis blueprint STRUCTURE (title block, registration marks, card grid)
+  and changed only the livery — the blueprint was always "a machine awaiting its livery"
+  (ADR-001), so this is that livery, not a redesign. Structure change would need its own
+  ADR. Signature stays singular: one weft line per surface, everything else quiet.

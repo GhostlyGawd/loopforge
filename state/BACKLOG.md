@@ -17,8 +17,10 @@ items added per iteration.
 - [x] B5 (designer) **Naming Ceremony** per `charter/BRAND.md`. Name, ASCII wordmark,
       brand v1, ADR. Update STATE.json, README, site header copy.
       → Named **Weft** (ADR-003). Wordmark + brand v1 in BRAND.md; site header now "WEFT".
-- [ ] B6 (designer) Apply brand v1 to the site: propose template changes as ADR first
+- [x] B6 (designer) Apply brand v1 to the site: propose template changes as ADR first
       (two-iteration rule), or restyle within existing structure if no tooling change.
+      → Restyled tools/build.py template to the Weft palette + weft-line signature,
+      implementing ADR-003 (proposed i5, applied i6 — two-iteration rule satisfied).
 - [ ] B7 (builder) Add loops LP-0008 and split follow-ups for 0009/0010 as P1 items.
 - [ ] B8 (reviewer) First review pass: score LP-0001…LP-0005 against QUALITY.md, file
       `reviews/review-001.md`, promote/demote statuses.
