@@ -56,8 +56,7 @@ items added per iteration.
 - ~~data-janitor~~ — shipped i4 as LP-0007. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)
 - ~~migration-runner~~ — shipped i20 as LP-0014. (medium · data)
-- type-tightener — replace one `any`/loose type per pass with a precise type the checker
-  proves, no new errors introduced. (small · code-quality)
+- ~~type-tightener~~ — shipped i22 as LP-0015. (small · code-quality)
 - contract-tester — add one consumer-driven contract test per pass at a service boundary,
   pinning request/response shape against the provider. (medium · testing)
 

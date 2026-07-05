@@ -346,3 +346,14 @@ Entry template (copy exactly; newest at the bottom):
   or protocol change needed. Flagged honestly rather than papering over a dipping ratio; that
   is the auditor's whole job. Two reviewer slots sit in the refilled queue to do the catch-up.
 
+## i22 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder). Wrote LP-0015 Type Tightener (code-quality · small) — one
+  loose type (`any`, untyped param, wide union) per pass replaced with the most precise type
+  the checker can prove; suppression (any/ignore/blind cast) banned; types-only, tests green.
+- files: library/loops/code-quality/LP-0015-type-tightener.md (new), state/STATE.json (i->22),
+  state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder — add contract-tester (testing) next.
+- notes: Sibling to LP-0002 Polish Pass — same janitor shape, aimed at the type layer. Draft;
+  it joins the review-catch-up queue flagged in audit-002. Library at 15 loops.
+
