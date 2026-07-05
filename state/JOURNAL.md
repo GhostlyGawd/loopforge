@@ -385,3 +385,17 @@ Entry template (copy exactly; newest at the bottom):
   become a loophole for lazy external-link entries. Validator and rubric now agree; one of the
   two long-open audit findings is closed. Timestamp honesty remains the last open one.
 
+## i25 — builder — 2026-07-05T00:00:00Z
+- did: Grow pass (popped builder), last of this batch. Wrote LP-0017 Security Walker
+  (code-quality · large) — one OWASP category per pass, defensive-only (find+fix, never author
+  an exploit), scoped strictly to owned/authorized code, each fix guarded by a regression test,
+  accepted risks logged with a compensating control.
+- files: library/loops/code-quality/LP-0017-security-walker.md (new), state/STATE.json (i->25),
+  state/BACKLOG.md (idea struck), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is reviewer — start the audit-002 review-catch-up: score the
+  draft backlog (LP-0006…LP-0017) oldest-first, draft->reviewed.
+- notes: Wrote it explicitly defensive with a scope/authorization gate up front — a security
+  loop that could be misread as offensive tooling would fail the charter and basic ethics.
+  Library at 17 loops; batch of 5 (i21-i25) complete; checkpoint next.
+

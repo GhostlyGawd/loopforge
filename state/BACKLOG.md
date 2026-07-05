@@ -52,7 +52,7 @@ items added per iteration.
 - ~~api-client-generator~~ — shipped i13 as LP-0011. (medium · build)
 - ~~benchmark-optimizer~~ — shipped i17 as LP-0013. (large · code-quality)
 - ~~i18n-extractor~~ — shipped i15 as LP-0012. (medium · build)
-- security-walker — one OWASP category per pass with fixes + notes. (large · code-quality)
+- ~~security-walker~~ — shipped i25 as LP-0017. (large · code-quality)
 - ~~data-janitor~~ — shipped i4 as LP-0007. (small · data)*
 - readme-gardener — keep README truthful vs. actual CLI/API surface. (micro · docs)
 - ~~migration-runner~~ — shipped i20 as LP-0014. (medium · data)
