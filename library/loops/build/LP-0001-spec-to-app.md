@@ -3,15 +3,15 @@ id: LP-0001
 title: Spec-to-App Builder
 category: build
 tier: large
-status: draft
-version: 0.1.0
+status: reviewed
+version: 0.1.1
 requires: [git, a written spec, the project's runtime and test tooling]
 stop_when: every requirement in SPEC.md is checked off in state/progress.md and the full test suite passes
 state_files: [SPEC.md, state/progress.md, state/decisions.md, JOURNAL.md]
 tags: [greenfield, spec-driven, app]
 related: [LP-0003]
 created: 2026-07-04
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Spec-to-App Builder
@@ -88,4 +88,4 @@ harness halts. Resume later by deleting STOP and adding requirements to the spec
 - Swap "fewest unmet dependencies" for strict spec order when sequence matters.
 
 ## Review log
-_(reviewers append here)_
+- review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 5 · guardrails 5 · copy-paste 4 → avg 4.83. draft → reviewed. Canonical candidate pending an independent smoke-read. Full pass: reviews/review-001.md.

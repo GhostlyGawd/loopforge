@@ -87,3 +87,22 @@ Template:
   changed here — that is a template edit, so under the two-iteration rule this ADR *proposes*
   the brand-v1 restyle and B6 (a later iteration) implements it citing ADR-003. Rebrands
   remain expensive: they require an Auditor-endorsed ADR (BRAND.md standing constraint).
+
+## ADR-004 — Close bootstrap, open the grow phase (i9, auditor)
+- Status: accepted
+- Context: The bootstrap checklist B1–B8 is complete (baseline, taxonomy v1, LP-0006/0007/
+  0008, brand v1 applied, first review pass). audit-001 confirms the gate is green every
+  pass, state/backlog/journal/commits agree with no drift, no blocked items, and the quality
+  ratio is 5/8 (0.63) — already above the M2 ≥ 0.60 floor. LOOP.md § Phases says the Auditor
+  closes bootstrap once the last item is done: set phase to "grow" and record the transition.
+- Decision: Close the bootstrap phase. Set `state/STATE.json` `phase` to "grow" and refill
+  `role_queue` from the default cycle in charter/ROLES.md, in order:
+  [builder, builder, librarian, builder, reviewer, builder, designer, builder, reviewer,
+  scout, builder, auditor]. From now on each pass pops the queue's head (refilling from the
+  same cycle when empty) instead of following the B-list. B9 itself is the final bootstrap act.
+- Consequences: Growth is now driven by BACKLOG priority within each popped role's remit,
+  toward the VISION milestones (M1: 10 loops, ≥5 reviewed, brand named+applied, first audit
+  — nearly met; M2: 50 loops, every category populated, ≥60% reviewed). The three audit-001
+  proposals become live work: timestamp-honesty and the SCHEMA §4 / LP-0005 reconciliation
+  each need their own proposing ADR before any tooling change (two-iteration rule); the
+  canonical smoke-reads fold into grow-phase reviewer slots.

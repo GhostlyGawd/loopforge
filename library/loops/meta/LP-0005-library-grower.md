@@ -3,15 +3,15 @@ id: LP-0005
 title: Library Grower
 category: meta
 tier: epic
-status: draft
-version: 0.1.0
+status: reviewed
+version: 0.1.1
 requires: [git, a charter defining quality, a schema for entries, validate/build tooling]
 stop_when: never by design — milestones advance, the loop continues (halt with STOP)
 state_files: [state/STATE.json, state/BACKLOG.md, state/JOURNAL.md, state/DECISIONS.md]
 tags: [meta, self-organizing, curation, multi-role]
 related: [LP-0001, LP-0002]
 created: 2026-07-04
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Library Grower
@@ -84,4 +84,4 @@ charter's VISION) mark maturity; `touch STOP` halts; deleting STOP resumes.
 - Multi-agent: run N harnesses on branches; a merge-role iteration reconciles.
 
 ## Review log
-_(reviewers append here)_
+- review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 4 · guardrails 5 · copy-paste 3 → avg 4.50. draft → reviewed. Held at the floor: prompt is by-reference to LOOP.md (copy-paste 3) and stop is 'never by design' (4). See review-001 seeds. Full pass: reviews/review-001.md.

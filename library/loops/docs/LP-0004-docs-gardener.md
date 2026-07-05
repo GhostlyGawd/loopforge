@@ -3,15 +3,15 @@ id: LP-0004
 title: Docs Gardener
 category: docs
 tier: medium
-status: draft
-version: 0.1.0
+status: reviewed
+version: 0.1.1
 requires: [git, a docs directory, the codebase the docs describe]
 stop_when: a full audit pass finds zero broken claims in state/docs-audit.md
 state_files: [state/docs-audit.md, JOURNAL.md]
 tags: [documentation, drift, maintenance]
 related: [LP-0002]
 created: 2026-07-04
-updated: 2026-07-04
+updated: 2026-07-05
 ---
 
 # Docs Gardener
@@ -83,4 +83,4 @@ Both queues empty and a final commit-skim clean → GARDEN CLEAN, STOP created. 
 - Inverse mode: audit code comments against behavior instead of docs.
 
 ## Review log
-_(reviewers append here)_
+- review-001 (i8, Lens): re-entrancy 5 · one-step 5 · memory 5 · stop 5 · guardrails 4 · copy-paste 5 → avg 4.83. draft → reviewed. Canonical candidate; axis 5 softer by domain (inspection, not a green gate). Full pass: reviews/review-001.md.
