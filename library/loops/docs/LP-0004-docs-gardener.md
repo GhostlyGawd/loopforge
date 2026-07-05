@@ -4,12 +4,12 @@ title: Docs Gardener
 category: docs
 tier: medium
 status: reviewed
-version: 0.1.1
+version: 0.1.2
 requires: [git, a docs directory, the codebase the docs describe]
 stop_when: a full audit pass finds zero broken claims in state/docs-audit.md
 state_files: [state/docs-audit.md, JOURNAL.md]
 tags: [documentation, drift, maintenance]
-related: [LP-0002]
+related: [LP-0002, LP-0009]
 created: 2026-07-04
 updated: 2026-07-05
 ---

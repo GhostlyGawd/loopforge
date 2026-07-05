@@ -4,12 +4,12 @@ title: Coverage Climber
 category: testing
 tier: small
 status: reviewed
-version: 0.1.1
+version: 0.1.2
 requires: [git, test runner with coverage reporting]
 stop_when: coverage meets the target recorded in state/coverage.json
 state_files: [state/coverage.json, JOURNAL.md]
 tags: [testing, coverage, safety-net]
-related: [LP-0001]
+related: [LP-0001, LP-0008]
 created: 2026-07-04
 updated: 2026-07-05
 ---

@@ -199,6 +199,16 @@ Entry template (copy exactly; newest at the bottom):
 - notes: M1 loop count reached (10). code-quality is now the fattest shelf (3: Polish Pass,
   Dependency Upgrader, A11y Sweeper) — a coherent "keep existing code healthy" cluster.
 
-
-
+## i12 — librarian — 2026-07-05T00:00:00Z
+- did: Grow pass (popped librarian). Ran the related: cross-link pass so the library
+  navigates as a web, not a flat list. Made the main clusters bidirectional: maintenance
+  hub LP-0002 <-> {0004,0006,0007,0010}, testing LP-0003 <-> {0001,0008}, docs LP-0004 <->
+  0009, build LP-0001 <-> 0005. Verified every related id resolves. Bumped the four edited
+  entries to v0.1.2.
+- files: LP-0001/0002/0003/0004 (related + version), state/STATE.json (i->12, queue popped),
+  state/BACKLOG.md (P1 cross-links checked), state/JOURNAL.md, regenerated INDEX + site.
+- validation: pass
+- next-suggestion: Queue head is builder — add a build-category loop (api-client-generator).
+- notes: Left two links deliberately one-way: LP-0005 (the meta root) -> 0002 and LP-0006 ->
+  0003 are "see also" pointers that need not be mutual. All ids resolve; no orphans.
 

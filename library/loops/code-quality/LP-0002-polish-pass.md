@@ -4,12 +4,12 @@ title: Polish Pass
 category: code-quality
 tier: micro
 status: reviewed
-version: 0.1.1
+version: 0.1.2
 requires: [git, project linter/formatter, test suite]
 stop_when: a full sweep of the codebase finds nothing above the "worth fixing" bar
 state_files: [state/polish-ledger.md, JOURNAL.md]
 tags: [refactor, lint, tidy, low-risk]
-related: []
+related: [LP-0004, LP-0006, LP-0007, LP-0010]
 created: 2026-07-04
 updated: 2026-07-05
 ---
