@@ -1,0 +1,52 @@
+# SCHEMA — anatomy of a library entry
+
+Every loop lives at `library/loops/<category-id>/LP-NNNN-slug.md`. IDs are unique,
+zero-padded, and never reused (even after deprecation).
+
+## Front matter (YAML, all keys required unless marked optional)
+
+```yaml
+---
+id: LP-0003
+title: Coverage Climber
+category: testing            # must exist in categories.json
+tier: small                  # micro | small | medium | large | epic
+status: draft                # draft | reviewed | canonical | deprecated
+version: 0.1.0               # bump patch on edits, minor on behavior change
+requires: [git, a test runner with coverage output]
+stop_when: coverage in state/coverage.json meets the target set at kickoff
+state_files: [state/coverage.json, JOURNAL.md]
+tags: [testing, iterative, safety-net]
+related: []                  # optional: other LP ids
+created: 2026-07-04
+updated: 2026-07-04
+---
+```
+
+## Required body sections, in order
+
+1. `# {title}` — one-paragraph purpose: what it builds/maintains and for whom.
+2. `## When to reach for it` — 2–4 bullets of fit and non-fit.
+3. `## Setup` — what to create before the first pass (state files, config, spec).
+4. `## The Loop Prompt` — ONE fenced block containing the complete prompt, written to
+   the QUALITY.md bar. This block is the product; everything else is packaging.
+5. `## Harness` — the exact shell to run it (see house harness pattern below).
+6. `## Stop condition` — how the loop knows it's done and what it does then.
+7. `## Failure modes` — the 2–4 most likely ways it goes wrong, and the prompt's
+   built-in response to each.
+8. `## Variations` — optional; parameterizations worth knowing.
+9. `## Review log` — reviewers append scores here; authors never edit it.
+
+## House harness pattern
+
+```bash
+while :; do
+  [ -f STOP ] && break
+  claude -p "$(cat PROMPT.md)" --dangerously-skip-permissions
+  sleep 2
+done
+```
+
+Always accompanied by the safety note: run unattended loops in a container or dedicated
+VM with only the project mounted; git is the undo button. Entries may substitute
+`--permission-mode acceptEdits` for supervised runs.
